@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marvel-Wegweiser</title>
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Overpass:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Layout: Wegweiser-Schild als Kopf, darunter ein Liniennetzplan. Jede Reihe ist eine farbige Linie, Filme sind Stationen, eine Führungslinie verbindet Station und Karte. */
+  color-scheme: light;
+  --bg: #EDF0ED;
+  --surface: #FFFFFF;
+  --ink: #13202B;
+  --muted: #5A6874;
+  --line: #D2D9D4;
+  --mark: #FFCE2E;
+  --on-mark: #13202B;
+  --sign: #13202B;
+  --on-sign: #F3F6F2;
+  --on-fc: #FFFFFF;
+  --f-display: "Big Shoulders Display", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Overpass", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --c-iron:#C0392B; --c-cap:#2B5FD9; --c-thor:#B8860B; --c-avengers:#5C6578; --c-gotg:#E8590C;
+  --c-spider:#D6336C; --c-ant:#6F8F00; --c-strange:#7048E8; --c-panther:#0E8A7D; --c-marvel:#B5179E;
+  --c-xmen:#1C8CA8; --c-deadpool:#7A1630; --c-defenders:#8D5A2B; --c-shield:#3F7F5B; --c-ff:#0B7BC4;
+  --c-venom:#3A3F45; --c-blade:#5A0F3C; --c-hulk:#2B9348; --c-other:#7B7F86;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0B1218; --surface: #151F28; --ink: #E9EEF1; --muted: #93A2AF; --line: #27343F; --mark: #FFCE2E; --on-mark: #13202B;
+    --sign: #1A2834; --on-sign: #F3F6F2; --on-fc: #0B1218;
+    --c-iron:#FF7A6B; --c-cap:#7BA2FF; --c-thor:#F0BE4A; --c-avengers:#AEB6C8; --c-gotg:#FF9A5C;
+    --c-spider:#FF7BA6; --c-ant:#C3DE4B; --c-strange:#B49BFF; --c-panther:#4FD6C6; --c-marvel:#F07CDD;
+    --c-xmen:#58C8E4; --c-deadpool:#E0607E; --c-defenders:#D9A066; --c-shield:#7FCB9E; --c-ff:#6CC0F5;
+    --c-venom:#B8B8B8; --c-blade:#D17AB0; --c-hulk:#6ED08A; --c-other:#A8ACB3;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0B1218; --surface: #151F28; --ink: #E9EEF1; --muted: #93A2AF; --line: #27343F; --mark: #FFCE2E; --on-mark: #13202B;
+  --sign: #1A2834; --on-sign: #F3F6F2; --on-fc: #0B1218;
+  --c-iron:#FF7A6B; --c-cap:#7BA2FF; --c-thor:#F0BE4A; --c-avengers:#AEB6C8; --c-gotg:#FF9A5C;
+  --c-spider:#FF7BA6; --c-ant:#C3DE4B; --c-strange:#B49BFF; --c-panther:#4FD6C6; --c-marvel:#F07CDD;
+  --c-xmen:#58C8E4; --c-deadpool:#E0607E; --c-defenders:#D9A066; --c-shield:#7FCB9E; --c-ff:#6CC0F5;
+  --c-venom:#B8B8B8; --c-blade:#D17AB0; --c-hulk:#6ED08A; --c-other:#A8ACB3;
+}
+.f-iron{--fc:var(--c-iron)} .f-cap{--fc:var(--c-cap)} .f-thor{--fc:var(--c-thor)} .f-avengers{--fc:var(--c-avengers)}
+.f-gotg{--fc:var(--c-gotg)} .f-spider{--fc:var(--c-spider)} .f-ant{--fc:var(--c-ant)} .f-strange{--fc:var(--c-strange)}
+.f-panther{--fc:var(--c-panther)} .f-marvel{--fc:var(--c-marvel)} .f-xmen{--fc:var(--c-xmen)} .f-deadpool{--fc:var(--c-deadpool)}
+.f-defenders{--fc:var(--c-defenders)} .f-shield{--fc:var(--c-shield)} .f-ff{--fc:var(--c-ff)} .f-venom{--fc:var(--c-venom)}
+.f-blade{--fc:var(--c-blade)} .f-hulk{--fc:var(--c-hulk)} .f-other{--fc:var(--c-other)}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5}
+h1,h2,h3,h4{font-family:var(--f-display);font-weight:800;line-height:1.02;margin:0;text-wrap:balance;letter-spacing:.015em}
+p{margin:0 0 .6em;text-wrap:pretty}
+a{color:inherit}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--mark);outline-offset:2px;border-radius:4px;box-shadow:0 0 0 5px var(--ink)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+@media (max-width:520px){.wrap{padding:0 16px}}
+.num{font-variant-numeric:tabular-nums}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Kopf: Wegweiser-Schild */
+.top{background:var(--sign);color:var(--on-sign);padding:30px 0 22px}
+.top .wrap{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:flex-end;justify-content:space-between}
+.top h1{font-size:clamp(2.8rem,10vw,5.6rem);text-transform:uppercase;color:var(--mark);line-height:.9}
+.top h1 span{color:var(--on-sign)}
+.lede{max-width:48ch;margin:12px 0 0;opacity:.82}
+.tools{display:flex;flex-direction:column;align-items:flex-end;gap:8px;font-size:.8125rem}
+.tools #syncNote{opacity:.75}
+.stripe{height:10px;background:linear-gradient(90deg,var(--c-iron) 0 9%,var(--c-cap) 9% 18%,var(--c-thor) 18% 27%,var(--c-hulk) 27% 36%,var(--c-gotg) 36% 45%,var(--c-strange) 45% 54%,var(--c-spider) 54% 63%,var(--c-ant) 63% 72%,var(--c-panther) 72% 81%,var(--c-marvel) 81% 90%,var(--c-xmen) 90% 100%)}
+.btn{border:1.5px solid var(--ink);background:var(--surface);padding:7px 14px;border-radius:999px;font-weight:700;font-size:.875rem;line-height:1.2}
+.btn:hover{background:var(--ink);color:var(--bg)}
+.btn.solid{background:var(--ink);color:var(--bg)}
+.btn.solid:hover{background:var(--surface);color:var(--ink)}
+.btn.small{padding:5px 12px;font-size:.8125rem}
+.btn.ghost{border-color:var(--line)}
+.top .btn{background:transparent;border-color:var(--on-sign);color:var(--on-sign)}
+.top .btn:hover{background:var(--on-sign);color:var(--sign)}
+.sections{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.sections .wrap{display:flex;gap:6px 22px;align-items:center;flex-wrap:wrap;padding-top:9px;padding-bottom:9px}
+.sections a{font-family:var(--f-display);font-weight:800;font-size:1.15rem;text-transform:uppercase;letter-spacing:.04em;text-decoration:none;padding:2px 0;border-bottom:3px solid transparent}
+.sections a:hover{border-bottom-color:var(--mark)}
+#miniProg{margin-left:auto;font-size:.8125rem;color:var(--muted)}
+section{scroll-margin-top:56px}
+.sec{padding:44px 0 8px}
+.sec>.wrap>h2,.sec h2.big{font-size:clamp(2.2rem,6vw,3.4rem);text-transform:uppercase;margin-bottom:8px}
+.sub{color:var(--muted);max-width:62ch;margin-bottom:18px}
+
+/* Übersicht */
+.sum{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:36px;padding-top:32px;padding-bottom:6px}
+@media (max-width:820px){.sum{grid-template-columns:1fr;gap:26px}}
+.big-n{font-family:var(--f-display);font-weight:800;font-size:clamp(4rem,13vw,6.4rem);line-height:.85}
+.big-n small{font-size:.3em;font-weight:700;color:var(--muted);margin-left:10px;letter-spacing:.03em;text-transform:uppercase}
+.bar{height:12px;border-radius:999px;background:var(--line);margin:14px 0 18px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--ink);width:0;border-radius:999px;transition:width .4s ease}
+.split{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:6px 22px;margin:0;padding:0;list-style:none}
+.split li{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line);padding:4px 0;font-size:.875rem}
+.split b{font-weight:700;white-space:nowrap}
+.next h3,.sum h3{font-size:1.6rem;text-transform:uppercase;margin-bottom:6px}
+.nx{display:grid;gap:10px;list-style:none;padding:0;margin:0}
+.nx li{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:inset 5px 0 0 var(--fc);padding:12px 14px 12px 18px;display:grid;gap:4px}
+.nx .t{font-weight:800;font-size:1.0625rem}
+.nx .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.empty{color:var(--muted)}
+
+/* Steuerung */
+.ctl{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:12px;margin:10px 0 18px}
+.ctl .r{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.ctl .lbl{font-size:.6875rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);min-width:84px}
+.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:999px;overflow:hidden;flex-wrap:wrap}
+.seg button{border:0;background:var(--surface);padding:7px 14px;font-weight:700;font-size:.875rem}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);padding:4px 11px;font-size:.8125rem;font-weight:700;border-radius:999px;display:inline-flex;align-items:center;gap:7px}
+.chip[class*="f-"]::before{content:"";width:16px;height:5px;border-radius:3px;background:var(--fc)}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+select{background:var(--surface);border:1.5px solid var(--ink);padding:5px 10px;border-radius:999px;margin-left:6px}
+.ctl label{font-size:.875rem;font-weight:700}
+.cb{display:inline-flex;gap:7px;align-items:center}
+.cb input{width:18px;height:18px;accent-color:var(--ink)}
+.hint{font-size:.8125rem;color:var(--muted)}
+
+/* Zeitachse als Liniennetzplan */
+.tl{position:relative;padding:34px 0 30px}
+.tl.wide{padding-top:132px}
+.gwrap{position:absolute;left:0;top:0;bottom:0;z-index:1;pointer-events:none}
+.gsvg{position:absolute;left:0;top:0;overflow:visible}
+.gsvg path{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.gsvg .ln{stroke-width:var(--lw,5px)}
+.gsvg .lk{stroke-width:var(--lw,5px)}
+.gsvg .faint{opacity:.36}
+.gsvg .dock{stroke-dasharray:1 9}
+.gsvg .lo{opacity:.07}
+.gsvg .hi{opacity:1;stroke-width:calc(var(--lw,5px) + 2px)}
+.gsvg .ld{stroke-width:1.5;stroke-dasharray:1 5;opacity:.55}
+.gsvg .ld.lo{opacity:.1}
+.gsvg .ld.on{opacity:1;stroke-dasharray:none;stroke-width:2}
+.gsvg .bandln{stroke:var(--muted);stroke-width:1;opacity:.3;stroke-dasharray:2 6}
+.gsvg .sagaln{stroke:var(--ink);stroke-width:3;opacity:.85}
+.gsvg rect.bun{fill:var(--ink);opacity:.045}
+.lanehead{position:absolute;top:8px;font-size:.625rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;color:var(--muted);line-height:1}
+.lanelab{position:absolute;top:118px;font-size:.6875rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;color:var(--fc);line-height:1;transform-origin:0 100%;transform:translate(2px,-100%) rotate(-58deg)}
+.lanelab.dimmed{opacity:.25}
+.st{position:absolute;z-index:3;transform:translate(-50%,-50%);width:var(--ss,16px);height:var(--ss,16px);border-radius:50%;border:var(--sb,3.5px) solid var(--fc);background:var(--surface);box-sizing:border-box;pointer-events:auto;cursor:pointer;transition:background .2s,transform .15s}
+.st:hover{transform:translate(-50%,-50%) scale(1.25)}
+.st.hub{width:calc(var(--ss,16px) + 8px);height:calc(var(--ss,16px) + 8px);border-color:var(--ink);box-shadow:0 0 0 3px var(--bg)}
+.st.alt{border-radius:4px}
+.st.span{transform:translateX(-50%);border-radius:var(--ss,16px)}
+.st.span:hover{transform:translateX(-50%)}
+.st.seen{background:var(--fc)}
+.st.hub.seen{background:var(--ink)}
+.st.ann{border-style:dotted;background:var(--bg)}
+.st.sel{box-shadow:0 0 0 3px var(--bg),0 0 0 6px var(--mark);z-index:4}
+.st.nr{opacity:.2}
+.st.flash{box-shadow:0 0 0 3px var(--bg),0 0 0 7px var(--mark)}
+.tlbody{position:relative;z-index:2;min-width:0}
+.saga{margin:34px 0 8px;background:var(--sign);color:var(--on-sign);border-radius:14px;padding:14px 18px 11px;display:flex;gap:6px 16px;align-items:baseline;flex-wrap:wrap}
+.saga h3{font-size:clamp(1.9rem,5vw,2.8rem);text-transform:uppercase;letter-spacing:.04em;color:var(--mark)}
+.saga small{font-size:.8125rem;opacity:.8}
+.band{margin:0 0 6px}
+.bh{display:flex;align-items:center;gap:12px;padding:22px 0 8px;flex-wrap:wrap}
+.bh h3{font-size:1.5rem;text-transform:uppercase;background:var(--ink);color:var(--bg);border-radius:999px;padding:5px 16px 3px;white-space:nowrap;letter-spacing:.05em}
+.bh small{font-size:.8125rem;color:var(--muted)}
+.its{list-style:none;margin:0;padding:0}
+.it{padding:5px 0;scroll-margin-top:90px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px;min-width:0;transition:box-shadow .15s,border-color .15s}
+.card:hover{border-color:color-mix(in srgb,var(--fc) 60%,var(--line))}
+.top-line{display:flex;gap:14px;align-items:flex-start}
+.chk{position:relative;flex:none;width:28px;height:28px;display:inline-block}
+.chk input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.chk .box{position:absolute;inset:0;border:3.5px solid var(--fc);background:var(--surface);border-radius:50%;pointer-events:none;transition:background .15s}
+.chk input:hover+.box{background:color-mix(in srgb,var(--fc) 22%,var(--surface))}
+.chk input:checked+.box{background:var(--fc)}
+.chk input:checked+.box::after{content:"";position:absolute;left:7px;top:2.5px;width:6px;height:12px;border:solid var(--on-fc);border-width:0 3px 3px 0;transform:rotate(45deg)}
+.chk input:focus-visible+.box{outline:3px solid var(--mark);outline-offset:3px;box-shadow:0 0 0 6px var(--ink)}
+.annmark{flex:none;font-size:.625rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;border:1.5px dotted var(--muted);color:var(--muted);border-radius:999px;padding:5px 9px;margin-top:1px}
+.ttlwrap{flex:1;min-width:0}
+.dt{font-size:.75rem;color:var(--muted);font-variant-numeric:tabular-nums;font-weight:600;letter-spacing:.02em;line-height:1.2;margin-bottom:1px}
+.dt b{color:var(--ink);font-weight:800;margin-right:8px}
+.ttl{background:none;border:0;padding:0;text-align:left;font-weight:800;font-size:1.125rem;line-height:1.25;overflow-wrap:anywhere}
+.ttl:hover{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+.orig{display:block;font-size:.8125rem;color:var(--muted);font-weight:500}
+.pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;align-items:center}
+.lineb{font-size:.6875rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;background:var(--fc);color:var(--on-fc);padding:3px 9px 2px;border-radius:999px}
+.pill{font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border:1px solid var(--line);color:var(--muted);padding:2px 8px 1px;border-radius:999px;background:transparent}
+.pill.inv{border-color:var(--ink);color:var(--ink)}
+.pill.must{background:var(--mark);border-color:var(--mark);color:var(--on-mark)}
+.pill.dash{border-style:dashed}
+.meta{font-size:.8125rem;color:var(--muted);margin-top:5px}
+.it.seen .card{background:color-mix(in srgb,var(--surface) 55%,var(--bg))}
+.it.seen .ttl{color:var(--muted)}
+.it.dim{opacity:.35}
+.it.dim:hover,.it.dim:focus-within{opacity:.85}
+.it.hl .card{border-color:var(--fc);box-shadow:0 0 0 1px var(--fc)}
+.it.nr{opacity:.28}
+.it.nr:hover,.it.nr:focus-within{opacity:.8}
+.it.sel .card{border-color:var(--ink);box-shadow:0 0 0 2px var(--ink),0 10px 30px -12px color-mix(in srgb,var(--ink) 40%,transparent)}
+.it.rb .card{border-color:var(--fc);box-shadow:0 0 0 2px var(--fc)}
+.it.rl .card{border-color:var(--fc);box-shadow:0 0 0 2px var(--fc)}
+.it.rb .dt::after{content:"vorher schauen";margin-left:8px;background:var(--ink);color:var(--bg);border-radius:999px;padding:1px 8px;font-size:.625rem;text-transform:uppercase;letter-spacing:.06em}
+.it.rl .dt::after{content:"führt zu";margin-left:8px;background:var(--mark);color:var(--on-mark);border-radius:999px;padding:1px 8px;font-size:.625rem;text-transform:uppercase;letter-spacing:.06em}
+.it.flash .card{animation:fl 1.8s ease-out}
+@keyframes fl{from{box-shadow:0 0 0 7px var(--mark)}to{box-shadow:0 0 0 0 transparent}}
+.gsvg .ln,.gsvg .lk{animation:draw .7s ease-out both}
+@keyframes draw{from{opacity:0}}
+.det{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);display:grid;gap:12px;font-size:.9375rem}
+.det p{max-width:68ch}
+.det h4{font-family:var(--f-body);font-size:.6875rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px}
+.links{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:0}
+.lnk{border:1px solid var(--line);background:var(--surface);padding:3px 10px;font-size:.8125rem;font-weight:700;border-radius:999px;text-align:left;display:inline-flex;align-items:center;gap:6px}
+.lnk::before{content:"";flex:none;width:9px;height:9px;border-radius:50%;border:2.5px solid var(--fc);background:var(--surface)}
+.lnk.done::before{background:var(--fc)}
+.lnk:hover{border-color:var(--ink)}
+.lock{display:inline-block;font-size:.625rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;border-radius:999px;padding:2px 8px 1px;margin-right:7px;background:var(--mark);color:var(--on-mark);font-style:normal}
+.locked{color:var(--muted);font-style:italic}
+.conf{background:var(--mark);color:var(--on-mark);padding:10px 14px;border-radius:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.conf .btn{border-color:var(--on-mark);background:transparent;color:var(--on-mark)}
+.conf .btn.solid{background:var(--on-mark);color:var(--mark)}
+.era-note{font-size:.8125rem;color:var(--muted);margin:0 0 8px}
+.relnote{display:flex;gap:6px 18px;align-items:center;flex-wrap:wrap;font-size:.8125rem;color:var(--muted);padding:2px 2px 8px}
+.relnote b{color:var(--ink)}
+.relnote i{display:inline-block;width:30px;border-top:5px solid var(--c-iron);border-radius:3px;vertical-align:middle;margin-right:6px}
+.relnote i.f{opacity:.36}
+.relnote i.d{border-top:5px dotted var(--c-xmen);border-radius:0}
+.relnote i.o{width:14px;height:14px;border:3.5px solid var(--c-iron);border-radius:50%;background:var(--surface)}
+.relnote i.o.s{background:var(--c-iron)}
+.relnote i.o.h{border-color:var(--ink);width:18px;height:18px}
+.relnote.selbar{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin-bottom:8px;position:sticky;top:52px;z-index:10;color:var(--ink)}
+
+/* Universen */
+.unis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:12px}
+.uni{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:inset 0 5px 0 var(--fc)}
+.uni h3{font-size:1.45rem;text-transform:uppercase;margin:4px 0 8px}
+.uni p{font-size:.9375rem}
+.uni .sp{background:var(--bg);border-radius:10px;padding:8px 11px;margin-top:8px}
+
+/* Figuren */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:10px;list-style:none;margin:14px 0 0;padding:0}
+.cc{display:block;width:100%;height:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:inset 0 5px 0 var(--fc);padding:16px 14px 12px;min-height:112px;transition:transform .15s,border-color .15s}
+.cc:hover{border-color:var(--fc);transform:translateY(-2px)}
+.cc .n{font-family:var(--f-display);font-weight:800;font-size:1.45rem;line-height:1.02;display:block;text-transform:uppercase;letter-spacing:.02em}
+.cc .a{font-size:.8125rem;color:var(--muted);display:block;margin-top:2px}
+.cc .a:first-of-type{color:var(--fc);font-weight:800;filter:saturate(1.1)}
+.cc .s{font-size:.75rem;margin-top:8px;display:block;color:var(--muted)}
+.cc.gated{border-style:dashed;color:var(--muted);box-shadow:none}
+.srch{border:1.5px solid var(--ink);background:var(--surface);padding:7px 14px;min-width:min(100%,280px);border-radius:999px}
+
+/* Panel */
+dialog.panel{margin:0 0 0 auto;height:100dvh;max-height:100dvh;width:min(580px,100vw);max-width:100vw;border:0;border-left:8px solid var(--fc,var(--ink));padding:0;background:var(--bg);color:var(--ink);overflow:auto}
+dialog.panel::backdrop{background:rgba(8,12,16,.6)}
+.ph{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);padding:18px 20px 12px;display:flex;gap:10px;justify-content:space-between;align-items:flex-start}
+.ph h3{font-size:2.3rem;text-transform:uppercase}
+.pb{padding:16px 20px 44px;display:grid;gap:16px}
+.pb h4{font-family:var(--f-body);font-size:.6875rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px}
+.pb ul{margin:0;padding-left:1.1em}
+.pb p{margin:0}
+.ent{list-style:none;padding:0!important;display:grid;gap:8px}
+.ent li{border-left:3px solid var(--fc,var(--line));padding-left:11px}
+.ent li.locked{border-left-style:dotted;border-left-color:var(--line)}
+.ent li b{font-weight:800}
+
+footer{margin-top:56px;background:var(--sign);color:var(--on-sign);padding:22px 0 44px;font-size:.8125rem}
+footer .wrap{display:grid;gap:10px}
+footer p{opacity:.75;max-width:80ch}
+footer .btn{background:transparent;border-color:var(--on-sign);color:var(--on-sign)}
+footer .btn:hover{background:var(--on-sign);color:var(--sign)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div>
+      <h1>Marvel-<span>Wegweiser</span></h1>
+      <p class="lede">Haken setzen, Spoiler bleiben zu. Die Seite zeigt euch, was ihr als Nächstes schaut, und entsperrt Wissen erst, wenn ihr es gesehen habt.</p>
+    </div>
+    <div class="tools">
+      <span id="syncNote" aria-live="polite">Speichert auf diesem Gerät</span>
+      <button class="btn small" id="themeBtn" type="button">Darstellung: Auto</button>
+    </div>
+  </div>
+</header>
+<div class="stripe" aria-hidden="true"></div>
+<nav class="sections" aria-label="Bereiche">
+  <div class="wrap">
+    <a href="#zeitachse">Zeitachse</a>
+    <a href="#figuren">Figuren</a>
+    <a href="#universen">Universen</a>
+    <span id="miniProg" class="num"></span>
+  </div>
+</nav>
+<main>
+  <section id="uebersicht" aria-labelledby="h-ueb">
+    <div class="wrap sum">
+      <div>
+        <h2 class="vh" id="h-ueb">Fortschritt</h2>
+        <div class="big-n num" id="bigN"></div>
+        <div class="bar" role="progressbar" aria-label="Fortschritt" aria-valuemin="0" aria-valuemax="100" id="bar"><i id="barFill"></i></div>
+        <ul class="split" id="split"></ul>
+        <p class="hint" style="margin-top:10px">Nicht gezählt werden angekündigte Titel, die noch nicht erschienen sind.</p>
+      </div>
+      <div class="next">
+        <h3>Als Nächstes</h3>
+        <p class="hint" id="nextHint"></p>
+        <ol class="nx" id="nx"></ol>
+      </div>
+    </div>
+  </section>
+
+  <section id="zeitachse" class="sec" aria-labelledby="h-zeit">
+    <div class="wrap">
+      <h2 id="h-zeit">Zeitachse</h2>
+      <p class="sub">Alle Filme und Serien. Klappt einen Titel auf für Handlung, Vorbedingungen und Figuren. Datumsangaben sind US-Starttermine, Disney+ startet weltweit gleichzeitig.</p>
+      <div class="ctl" id="ctl"></div>
+      <div id="relnote"></div>
+      <div id="list"></div>
+    </div>
+  </section>
+
+  <section id="figuren" class="sec" aria-labelledby="h-fig">
+    <div class="wrap">
+      <h2 id="h-fig">Figuren</h2>
+      <p class="sub">Steckbriefe mit Fähigkeiten, Comic-Herkunft und Darstellern. Was in einem Titel mit der Figur passiert, steht erst da, wenn ihr den Titel abgehakt habt.</p>
+      <div class="ctl" id="cctl"></div>
+      <ul class="cgrid" id="cgrid"></ul>
+    </div>
+  </section>
+
+  <section id="universen" class="sec" aria-labelledby="h-uni">
+    <div class="wrap">
+      <h2 id="h-uni">Wie hängen die Universen zusammen?</h2>
+      <p class="sub">Marvel besteht aus mehreren Film- und Serienwelten, die von verschiedenen Studios stammen. Die grauen Spoiler-Kästchen öffnen sich, sobald ihr den genannten Titel gesehen habt.</p>
+      <div class="unis" id="unis"></div>
+    </div>
+  </section>
+</main>
+<footer>
+  <div class="wrap">
+    <div id="resetBox"></div>
+    <p>Inoffizielle Fan-Übersicht, nicht mit Marvel oder Disney verbunden. Alle Namen und Titel gehören ihren jeweiligen Inhabern. Stand: 14.11.2026. Angekündigte Termine können sich ändern.</p>
+  </div>
+</footer>
+<dialog class="panel" id="panel" aria-labelledby="pTitle">
+  <div id="panelBody"></div>
+</dialog>
+<script>
+"use strict";
+/* ================= DATEN ================= */
+const FRANCHISES = [
+  {k:"iron",n:"Iron Man"},{k:"cap",n:"Captain America"},{k:"thor",n:"Thor"},{k:"avengers",n:"Avengers"},
+  {k:"gotg",n:"Guardians"},{k:"spider",n:"Spider-Man"},{k:"ant",n:"Ant-Man"},{k:"strange",n:"Doctor Strange"},
+  {k:"panther",n:"Black Panther"},{k:"marvel",n:"Captain Marvel / Ms. Marvel"},{k:"hulk",n:"Hulk"},
+  {k:"xmen",n:"X-Men"},{k:"deadpool",n:"Deadpool"},{k:"defenders",n:"Defenders (Netflix)"},{k:"shield",n:"S.H.I.E.L.D. (ABC)"},
+  {k:"ff",n:"Fantastic Four"},{k:"venom",n:"Sonys Spider-Man-Welt"},{k:"blade",n:"Blade"},{k:"other",n:"Weitere"}
+];
+const UNIS = [
+  {k:"MCU",n:"MCU (Marvel Studios)"},{k:"NET",n:"Netflix (Defenders)"},{k:"ABC",n:"ABC-Serien"},
+  {k:"FOX",n:"Fox X-Men"},{k:"FF",n:"Fox Fantastic Four"},{k:"SONY",n:"Sony Spider-Man"},{k:"BLADE",n:"Blade"}
+];
+const UNI_SHORT = {MCU:"MCU",NET:"Netflix",ABC:"ABC",FOX:"Fox X-Men",FF:"Fox FF",SONY:"Sony",BLADE:"Blade"};
+const PHASES = {P1:"Phase 1",P2:"Phase 2",P3:"Phase 3",P4:"Phase 4",P5:"Phase 5",P6:"Phase 6"};
+const SAGA = {P1:"Infinity-Saga",P2:"Infinity-Saga",P3:"Infinity-Saga",P4:"Multiverse-Saga",P5:"Multiverse-Saga",P6:"Multiverse-Saga"};
+const IMP = {P:"Pflicht",E:"Empfohlen",O:"Optional"};
+const TODAY = "2026-11-14";
+
+/* T(id, deutscher Titel, Originaltitel, Typ, Datum, Universum, Phase, Franchise, Handlungszeit, Sortierzahl, Laufzeit, Prämisse, before, leadsTo, Wichtigkeit, extra) */
+function T(id,de,orig,type,date,uni,phase,fr,iu,ord,rt,premise,before,leads,imp,x){
+  return Object.assign({id,de,orig,type,date,uni,phase,fr,iu,ord,rt,premise,before:before||[],leadsTo:leads||[],imp,soft:[],alt:false,ann:false,note:""},x||{});
+}
+const TITLES = [
+/* ---------- MCU: Infinity-Saga ---------- */
+T("ironman","Iron Man","Iron Man","Film","2008-05-02","MCU","P1","iron","2008",2008.0,"ca. 126 Min.","Der Waffenmilliardär Tony Stark gerät in Gefangenschaft und baut sich aus der Not eine Rüstung. Danach muss er entscheiden, was er mit seinem Genie anfängt.",[],["ironman2","avengers1"],"P"),
+T("hulk","Der unglaubliche Hulk","The Incredible Hulk","Film","2008-06-13","MCU","P1","hulk","2011",2011.1,"ca. 112 Min.","Der Wissenschaftler Bruce Banner ist nach einem Strahlenunfall auf der Flucht vor dem Militär und sucht einen Weg, seinen Zustand zu kontrollieren. Steht etwas für sich, taucht aber später wieder auf.",[],["avengers1","bnw"],"O"),
+T("ironman2","Iron Man 2","Iron Man 2","Film","2010-05-07","MCU","P1","iron","2010 bis 2011",2010.5,"ca. 124 Min.","Die Welt kennt Tony Starks Geheimnis. Regierung, Rivalen und ein Gegner mit russischer Vergangenheit wollen seine Technik.",["ironman"],["avengers1"],"E"),
+T("thor","Thor","Thor","Film","2011-05-06","MCU","P1","thor","2011",2011.2,"ca. 115 Min.","Der übermütige Thronfolger von Asgard wird auf die Erde verbannt, wo er ohne seine Kräfte lernen muss, was einen Helden ausmacht.",[],["avengers1","thor2"],"P"),
+T("cap1","Captain America: The First Avenger","Captain America: The First Avenger","Film","2011-07-22","MCU","P1","cap","1942 bis 1945",1942.0,"ca. 124 Min.","Ein schmächtiger Freiwilliger im Zweiten Weltkrieg bekommt die Chance, mitzukämpfen. Der Film erzählt, wie aus Steve Rogers ein Held wird.",[],["avengers1","agentcarter","tws"],"P"),
+T("avengers1","Marvel's The Avengers","The Avengers","Film","2012-05-04","MCU","P1","avengers","2012",2012.0,"ca. 143 Min.","Eine Bedrohung aus dem All zwingt Nick Fury, die mächtigsten Helden der Erde zu einem Team zusammenzubringen.",["ironman","thor","cap1","hulk"],["ironman3","thor2","tws","gotg1","aou"],"P"),
+T("ironman3","Iron Man 3","Iron Man 3","Film","2013-05-03","MCU","P2","iron","Ende 2012",2012.9,"ca. 130 Min.","Tony Stark kämpft mit den Folgen der Schlacht um New York, während ein neuer Gegner sein Leben auseinandernimmt.",["avengers1"],["wonderman"],"E"),
+T("thor2","Thor – The Dark Kingdom","Thor: The Dark World","Film","2013-11-08","MCU","P2","thor","2013",2013.0,"ca. 112 Min.","Eine uralte Macht bedroht die Neun Welten, und Thor muss Hilfe von unerwarteter Seite annehmen.",["avengers1"],["aou","ragnarok"],"E"),
+T("tws","The Return of the First Avenger","Captain America: The Winter Soldier","Film","2014-04-04","MCU","P2","cap","2014",2014.0,"ca. 136 Min.","Steve Rogers versucht, sich im heutigen Washington zurechtzufinden, als ein Anschlag ihn in eine Verschwörung bei S.H.I.E.L.D. zieht.",["avengers1"],["aou","civilwar","tfatws"],"P"),
+T("gotg1","Guardians of the Galaxy","Guardians of the Galaxy","Film","2014-08-01","MCU","P2","gotg","2014",2014.3,"ca. 121 Min.","Ein Weltraum-Gauner stiehlt eine begehrte Kugel und landet mit einer Truppe Außenseiter im Gefängnis. Der Einstieg in die kosmische Seite des Universums.",[],["gotg2","iw"],"P"),
+T("aou","Avengers: Age of Ultron","Avengers: Age of Ultron","Film","2015-05-01","MCU","P2","avengers","2015",2015.3,"ca. 141 Min.","Tony Stark und Bruce Banner wollen ein Programm zum Schutz der Erde starten. Es läuft anders als geplant, und die Avengers müssen sich einem selbstgebauten Feind stellen.",["avengers1","tws","thor2"],["civilwar","iw"],"P"),
+T("antman","Ant-Man","Ant-Man","Film","2015-07-17","MCU","P2","ant","2015",2015.5,"ca. 117 Min.","Ein Ex-Häftling bekommt von einem Erfinder einen Anzug, mit dem er auf Insektengröße schrumpft, und einen gefährlichen Auftrag.",["aou"],["civilwar","antwasp"],"E"),
+T("civilwar","The First Avenger: Civil War","Captain America: Civil War","Film","2016-05-06","MCU","P3","cap","2016",2016.1,"ca. 147 Min.","Nach Einsätzen mit Opfern will die Regierung die Avengers kontrollieren. Über die Frage, ob sie sich fügen sollen, zerstreiten sich die Helden.",["aou","antman","tws"],["homecoming","panther","blackwidow","iw"],"P"),
+T("strange","Doctor Strange","Doctor Strange","Film","2016-11-04","MCU","P3","strange","2016 bis 2017",2016.7,"ca. 115 Min.","Ein berühmter Neurochirurg verliert nach einem Unfall seine Karriere und sucht in Nepal nach Heilung. Er stößt auf eine Welt der Magie.",["avengers1"],["ragnarok","iw","mom"],"P"),
+T("gotg2","Guardians of the Galaxy Vol. 2","Guardians of the Galaxy Vol. 2","Film","2017-05-05","MCU","P3","gotg","2014",2014.5,"ca. 136 Min.","Die Guardians sind ein eingespieltes Team, werden aber von einem Mann aus Peter Quills Vergangenheit überrascht.",["gotg1"],["iw","gotg3"],"E"),
+T("homecoming","Spider-Man: Homecoming","Spider-Man: Homecoming","Film","2017-07-07","MCU","P3","spider","2016",2016.4,"ca. 133 Min.","Peter Parker, 15, will nach den Erfahrungen mit den Avengers beweisen, dass er mehr kann als Nachbarschaftshilfe.",["civilwar"],["iw","ffh"],"E"),
+T("ragnarok","Thor: Tag der Entscheidung","Thor: Ragnarok","Film","2017-11-03","MCU","P3","thor","2017",2017.5,"ca. 130 Min.","Thor sitzt auf einem fernen Schrottplaneten fest und muss zurück, um Asgard vor einer drohenden Katastrophe zu retten.",["thor2","aou","strange"],["iw","thorlt"],"P"),
+T("panther","Black Panther","Black Panther","Film","2018-02-16","MCU","P3","panther","2016",2016.3,"ca. 134 Min.","T'Challa kehrt als König nach Wakanda zurück, einem Land, das sich lange vor der Welt versteckt hat, und muss es gegen Bedrohungen verteidigen.",["civilwar"],["iw","bpwf","eyes"],"P"),
+T("iw","Avengers: Infinity War","Avengers: Infinity War","Film","2018-04-27","MCU","P3","avengers","2018",2018.3,"ca. 149 Min.","Die Avengers und ihre Verbündeten stellen sich einem Gegner, der es auf die mächtigsten Artefakte des Universums abgesehen hat.",["strange","ragnarok","panther","gotg2"],["endgame"],"P"),
+T("antwasp","Ant-Man and the Wasp","Ant-Man and the Wasp","Film","2018-07-06","MCU","P3","ant","2018",2018.2,"ca. 118 Min.","Scott Lang steht unter Hausarrest, als Hank Pym und Hope van Dyne ihn für eine heikle Mission brauchen.",["civilwar","antman"],["endgame","quantumania"],"E"),
+T("cm","Captain Marvel","Captain Marvel","Film","2019-03-08","MCU","P3","marvel","1995",1995.0,"ca. 124 Min.","Eine Pilotin der Air Force wird in einen Krieg zwischen zwei Alien-Völkern gezogen und entdeckt, wer sie wirklich ist. Spielt Mitte der 1990er.",[],["endgame","marvels","secretinvasion"],"P"),
+T("endgame","Avengers: Endgame","Avengers: Endgame","Film","2019-04-26","MCU","P3","avengers","2018 und 2023",2023.0,"ca. 181 Min.","Die verbliebenen Avengers suchen nach einem Weg, das Geschehene zu verändern. Der Abschluss der Infinity-Saga.",["iw","antwasp","cm"],["wandavision","tfatws","loki1","ffh","shangchi","eternals","hawkeye"],"P"),
+T("ffh","Spider-Man: Far From Home","Spider-Man: Far From Home","Film","2019-07-02","MCU","P3","spider","2024",2024.0,"ca. 129 Min.","Peter Parker will auf Klassenfahrt in Europa Urlaub von der Heldenrolle machen, doch Nick Fury hat andere Pläne.",["endgame","homecoming"],["nwh"],"E"),
+
+/* ---------- MCU: Multiverse-Saga ---------- */
+T("wandavision","WandaVision","WandaVision","Serie","2021-01-15","MCU","P4","avengers","nach Endgame (2023)",2023.2,"9 Folgen","Wanda und Vision leben als perfektes Paar in einer Sitcom-Welt, in der etwas nicht stimmt.",["endgame"],["mom","agatha","visionquest"],"P"),
+T("tfatws","The Falcon and the Winter Soldier","The Falcon and the Winter Soldier","Serie","2021-03-19","MCU","P4","cap","nach Endgame (2023 bis 2024)",2023.5,"6 Folgen","Sam Wilson und Bucky Barnes müssen nach Steves Abschied mit ihrem Erbe klarkommen, als eine neue Gruppe die Welt bedroht.",["endgame"],["bnw","thunderbolts"],"P"),
+T("loki1","Loki – Staffel 1","Loki Season 1","Serie","2021-06-09","MCU","P4","thor","außerhalb der Zeit, nach Endgame",2023.1,"6 Folgen","Eine Zeitaufsichtsbehörde nimmt Loki fest und macht ihm ein Angebot, das er nicht ablehnen kann.",["endgame"],["loki2","dw","mom"],"P"),
+T("blackwidow","Black Widow","Black Widow","Film","2021-07-09","MCU","P4","avengers","2016",2016.2,"ca. 134 Min.","Natasha Romanoff muss sich ihrer Vergangenheit stellen, als eine Verschwörung aus ihrer Zeit als Agentin sie einholt. Spielt nach Civil War.",["civilwar"],["hawkeye","thunderbolts"],"E"),
+T("whatif1","What If...? – Staffel 1","What If...? Season 1","Animation","2021-08-11","MCU","P4","avengers","Parallele Realitäten",8001,"9 Folgen","Animationsserie: Was wäre, wenn bekannte Momente anders verlaufen wären? Ein Beobachter erzählt die Alternativgeschichten.",["endgame"],["whatif2","zombies"],"O",{alt:true}),
+T("shangchi","Shang-Chi and the Legend of the Ten Rings","Shang-Chi and the Legend of the Ten Rings","Film","2021-09-03","MCU","P4","other","nach Endgame",2024.1,"ca. 132 Min.","Shang-Chi wird von seiner Vergangenheit eingeholt, als die Organisation der Zehn Ringe auf ihn zukommt.",["endgame"],["wonderman"],"E"),
+T("eternals","Eternals","Eternals","Film","2021-11-05","MCU","P4","other","nach Endgame, Rückblicke bis in die Antike",2024.2,"ca. 156 Min.","Unsterbliche Wesen leben seit Jahrtausenden unter den Menschen und müssen zusammenfinden, als eine alte Bedrohung zurückkehrt.",["endgame"],[],"E"),
+T("hawkeye","Hawkeye","Hawkeye","Serie","2021-11-24","MCU","P4","avengers","Dezember 2024",2024.9,"6 Folgen","Clint Barton will zu Weihnachten bei seiner Familie sein, doch eine junge Bogenschützin bringt seine alte Identität ans Licht.",["endgame"],["echo","ddba1"],"E"),
+T("nwh","Spider-Man: No Way Home","Spider-Man: No Way Home","Film","2021-12-17","MCU","P4","spider","Dezember 2024",2024.95,"ca. 148 Min.","Peter Parker bittet Doctor Strange um Hilfe, nachdem sein Geheimnis öffentlich wurde. Ein Zauber geht schief.",["ffh"],["mom","bnd"],"P"),
+T("moonknight","Moon Knight","Moon Knight","Serie","2022-03-30","MCU","P4","other","nach Endgame",2024.4,"6 Folgen","Ein schüchterner Museumsangestellter leidet unter Gedächtnislücken und Stimmen im Kopf und gerät in einen Streit zwischen ägyptischen Göttern.",[],[],"O"),
+T("mom","Doctor Strange in the Multiverse of Madness","Doctor Strange in the Multiverse of Madness","Film","2022-05-06","MCU","P4","strange","nach No Way Home",2025.0,"ca. 126 Min.","Doctor Strange trifft auf eine Jugendliche, die zwischen Welten springen kann, und wird in eine Gefahr hineingezogen, die das Multiversum betrifft.",["wandavision","nwh","strange"],["marvels"],"P"),
+T("msmarvel","Ms. Marvel","Ms. Marvel","Serie","2022-06-08","MCU","P4","marvel","nach Endgame",2024.7,"6 Folgen","Die Schülerin Kamala Khan aus Jersey City ist Superhelden-Fan und erhält durch ein Familienerbstück besondere Kräfte.",[],["marvels"],"E"),
+T("thorlt","Thor: Love and Thunder","Thor: Love and Thunder","Film","2022-07-08","MCU","P4","thor","nach Endgame",2024.8,"ca. 119 Min.","Thor sucht nach seinem Platz, als ein Gegner auftaucht, der Götter jagt.",["ragnarok","endgame"],[],"E"),
+T("shehulk","She-Hulk: Die Anwältin","She-Hulk: Attorney at Law","Serie","2022-08-18","MCU","P4","hulk","nach Endgame",2025.1,"9 Folgen","Die Anwältin Jennifer Walters bekommt nach einem Unfall Hulk-Kräfte und muss Beruf und Heldenrolle vereinbaren. Komödie mit Meta-Humor.",["endgame"],[],"O"),
+T("wbn","Werewolf by Night","Werewolf by Night","Special","2022-10-07","MCU","P4","other","unklar",2025.2,"ca. 53 Min.","Ein Halloween-Special in Schwarzweiß: Monsterjäger treffen sich zu einem tödlichen Wettbewerb in einem düsteren Anwesen.",[],[],"O",{note:"Zeitpunkt nicht festgelegt, steht für sich."}),
+T("bpwf","Black Panther: Wakanda Forever","Black Panther: Wakanda Forever","Film","2022-11-11","MCU","P4","panther","nach Endgame",2025.3,"ca. 161 Min.","Wakanda trauert und muss sich gegen Mächte behaupten, die auf das Land und seine Ressourcen aus sind.",["panther","endgame"],["ironheart"],"E"),
+T("holiday","The Guardians of the Galaxy Holiday Special","The Guardians of the Galaxy Holiday Special","Special","2022-11-25","MCU","P4","gotg","nach Endgame",2025.4,"ca. 44 Min.","Die Guardians versuchen, Peter Quill zu Weihnachten eine Freude zu machen. Kurz und leicht.",["gotg2","endgame"],["gotg3"],"O"),
+T("quantumania","Ant-Man and the Wasp: Quantumania","Ant-Man and the Wasp: Quantumania","Film","2023-02-17","MCU","P5","ant","nach Endgame",2025.5,"ca. 125 Min.","Scott Lang, Hope und ihre Familie landen im Quantenreich und stoßen auf eine neue Bedrohung.",["antwasp","endgame"],["loki2"],"P"),
+T("gotg3","Guardians of the Galaxy Vol. 3","Guardians of the Galaxy Vol. 3","Film","2023-05-05","MCU","P5","gotg","nach Endgame",2025.6,"ca. 150 Min.","Die Guardians müssen einen der Ihren retten und stoßen dabei auf dessen Vergangenheit.",["gotg2","endgame"],[],"E",{soft:["holiday"]}),
+T("secretinvasion","Secret Invasion","Secret Invasion","Serie","2023-06-21","MCU","P5","avengers","nach Endgame",2025.7,"6 Folgen","Nick Fury erfährt von einer unterwanderten Erde: Gestaltwandler haben sich in Schlüsselpositionen eingeschleust.",["cm","endgame"],[],"E"),
+T("loki2","Loki – Staffel 2","Loki Season 2","Serie","2023-10-05","MCU","P5","thor","außerhalb der Zeit",2025.8,"6 Folgen","Loki muss mit den Folgen von Staffel 1 umgehen, als die Zeitaufsicht vor einem Problem steht.",["loki1"],["dw"],"P"),
+T("marvels","The Marvels","The Marvels","Film","2023-11-10","MCU","P5","marvel","nach Endgame",2025.9,"ca. 105 Min.","Drei Heldinnen tauschen plötzlich bei Gebrauch ihrer Kräfte die Plätze und müssen gemeinsam eine Krise lösen.",["cm","wandavision","msmarvel"],[],"E"),
+T("whatif2","What If...? – Staffel 2","What If...? Season 2","Animation","2023-12-22","MCU","P5","avengers","Parallele Realitäten",8002,"9 Folgen","Zweite Staffel mit weiteren Was-wäre-wenn-Geschichten.",["whatif1"],["whatif3"],"O",{alt:true}),
+T("echo","Echo","Echo","Serie","2024-01-09","MCU","P5","other","nach Endgame",2025.95,"5 Folgen","Maya Lopez, eine gehörlose Kämpferin, kehrt nach Hause zurück und stellt sich ihrer Vergangenheit und ihrer Familie.",["hawkeye"],["ddba1"],"O"),
+T("x97s1","X-Men '97 – Staffel 1","X-Men '97 Season 1","Animation","2024-03-20","MCU","P5","xmen","Alternative Realität, 1990er-Stil",8003,"10 Folgen","Die Fortsetzung der Zeichentrickserie der 1990er: Das Team um Professor X muss sich in einer neuen Zeit bewähren.",[],["x97s2"],"O",{alt:true,note:"Kenntnis der alten Serie hilft, ist aber nicht nötig."}),
+T("dw","Deadpool & Wolverine","Deadpool & Wolverine","Film","2024-07-26","MCU","P5","deadpool","nach Endgame",2025.55,"ca. 128 Min.","Deadpool wird von der Zeitaufsicht angeworben und muss Wolverine für eine Mission gewinnen.",["loki1"],[],"E",{soft:["deadpool1","deadpool2","logan","xmen00"]}),
+T("agatha","Agatha All Along","Agatha All Along","Serie","2024-09-18","MCU","P5","other","nach WandaVision",2026.0,"9 Folgen","Agatha Harkness wird nach den Ereignissen von WandaVision gebraucht und geht mit einem Hexenzirkel einen magischen Weg.",["wandavision"],[],"E"),
+T("whatif3","What If...? – Staffel 3","What If...? Season 3","Animation","2024-12-22","MCU","P5","avengers","Parallele Realitäten",8004,"9 Folgen","Dritte und letzte Staffel der Animationsserie.",["whatif2"],[],"O",{alt:true}),
+T("yfns1","Your Friendly Neighborhood Spider-Man – Staffel 1","Your Friendly Neighborhood Spider-Man Season 1","Animation","2025-01-29","MCU","P5","spider","Alternative Realität",8005,"10 Folgen","Animationsserie in einer eigenen Welt: Peter Parker beginnt als Spider-Man, mit Norman Osborn als Mentor.",[],["yfns2"],"O",{alt:true}),
+T("bnw","Captain America: Brave New World","Captain America: Brave New World","Film","2025-02-14","MCU","P5","cap","nach Endgame",2026.15,"ca. 118 Min.","Sam Wilson, jetzt Captain America, wird in eine internationale Krise hineingezogen.",["tfatws","hulk"],["thunderbolts"],"E"),
+T("ddba1","Daredevil: Born Again – Staffel 1","Daredevil: Born Again Season 1","Serie","2025-03-04","MCU","P5","defenders","nach Endgame",2026.1,"9 Folgen","Matt Murdock kämpft als Anwalt in New York, während Wilson Fisk neue Pläne verfolgt. Setzt die Netflix-Serie fort.",["ddn3","echo"],["ddba2"],"E",{soft:["ddn1","ddn2","defenders"]}),
+T("thunderbolts","Thunderbolts*","Thunderbolts*","Film","2025-05-02","MCU","P5","other","nach Endgame",2026.3,"ca. 127 Min.","Eine Gruppe von Außenseitern und Ex-Gegnern wird zu einem gemeinsamen Einsatz gezwungen.",["blackwidow","tfatws","bnw"],["doomsday"],"P"),
+T("ironheart","Ironheart","Ironheart","Serie","2025-06-24","MCU","P5","iron","nach Wakanda Forever",2026.2,"6 Folgen","Die junge Erfinderin Riri Williams baut in Chicago ihre eigene Rüstung und gerät an einen mysteriösen Gegner.",["bpwf"],[],"O"),
+T("ff25","The Fantastic Four: First Steps","The Fantastic Four: First Steps","Film","2025-07-25","MCU","P6","ff","Alternative Realität, retro-futuristische 1960er",8006,"ca. 115 Min.","Die Fantastischen Vier leben in einer retro-futuristischen Version der 1960er und müssen eine Bedrohung aus dem All abwehren.",[],["doomsday"],"P",{alt:true,note:"Spielt in einer anderen Welt, braucht kein Vorwissen."}),
+T("eyes","Eyes of Wakanda","Eyes of Wakanda","Animation","2025-08-06","MCU","P6","panther","Antike bis Gegenwart",1000,"4 Folgen","Animationsserie über Wakandas geheime Kundschafter, die zu verschiedenen Zeiten Relikte sichern.",["panther"],[],"O"),
+T("zombies","Marvel Zombies","Marvel Zombies","Animation","2025-09-24","MCU","P6","avengers","Alternative Realität",8007,"4 Folgen","Animationsserie über eine Welt, in der Helden zu Zombies wurden. Düster und blutig, nicht für jüngere Zuschauer.",["whatif1"],[],"O",{alt:true}),
+T("wonderman","Wonder Man","Wonder Man","Serie","2026-01-27","MCU","P6","other","nach Endgame",2026.4,"","Ein Schauspieler mit Superkräften will die Rolle seines Lebens und muss sein Geheimnis wahren.",["ironman3","shangchi"],["visionquest"],"E"),
+T("ddba2","Daredevil: Born Again – Staffel 2","Daredevil: Born Again Season 2","Serie","2026-03-24","MCU","P6","defenders","nach Staffel 1",2026.5,"","Staffel 2 knüpft direkt an Staffel 1 an.",["ddba1"],["ddba3","punisher_special"],"E"),
+T("punisher_special","The Punisher: One Last Kill","The Punisher: One Last Kill","Special","2026-05-12","MCU","P6","defenders","nach Born Again",2026.55,"","Ein einmaliges Disney+-Special rund um Frank Castle.",["ddba1"],[],"O",{note:"Einordnung und Vorwissen nicht verifiziert."}),
+T("x97s2","X-Men '97 – Staffel 2","X-Men '97 Season 2","Animation","2026-07-01","MCU","P6","xmen","Alternative Realität, 1990er-Stil",8008,"","Staffel 2 knüpft an das Ende von Staffel 1 an.",["x97s1"],[],"O",{alt:true}),
+T("bnd","Spider-Man: Brand New Day","Spider-Man: Brand New Day","Film","2026-07-31","MCU","P6","spider","nach No Way Home",2026.6,"","Der nächste Spider-Man-Film im MCU, der nach No Way Home weitererzählt.",["nwh"],["doomsday"],"P"),
+T("visionquest","VisionQuest","VisionQuest","Serie","2026-10-14","MCU","P6","avengers","nach WandaVision",2026.7,"","Die Serie führt Visions Geschichte nach WandaVision fort.",["wandavision"],[],"E",{note:"Datum: Disney+-Start, US-Abend des 13.10."}),
+T("doomsday","Avengers: Doomsday","Avengers: Doomsday","Film","2026-12-18","MCU","P6","avengers","angekündigt",2026.9,"","Das nächste große Avengers-Treffen. Mehr ist offiziell nicht bekannt.",["thunderbolts","ff25","bnd"],["secretwars"],"P",{ann:true}),
+T("yfns2","Your Friendly Neighborhood Spider-Man – Staffel 2","Your Friendly Neighborhood Spider-Man Season 2","Animation","2027-01-13","MCU","P6","spider","Alternative Realität",8009,"","Zweite Staffel der Animationsserie.",["yfns1"],[],"O",{alt:true,ann:true}),
+T("ddba3","Daredevil: Born Again – Staffel 3","Daredevil: Born Again Season 3","Serie","2027-03","MCU","P6","defenders","angekündigt",2027.0,"","Dritte Staffel, laut Berichten die letzte.",["ddba2"],[],"E",{ann:true}),
+T("secretwars","Avengers: Secret Wars","Avengers: Secret Wars","Film","2027-12-17","MCU","P6","avengers","angekündigt",2027.9,"","Der angekündigte Abschluss der Multiverse-Saga. Termin laut Berichten möglicherweise verschiebbar.",["doomsday"],[],"P",{ann:true}),
+T("bp3","Black Panther 3","Black Panther 3","Film","2028-12-15","MCU","P6","panther","angekündigt",2028.9,"","Angekündigte Fortsetzung der Black-Panther-Reihe.",["bpwf"],[],"E",{ann:true}),
+T("xmenmcu","X-Men (MCU-Film, Arbeitstitel)","Untitled X-Men Film","Film","2028-05-05","MCU","P6","xmen","angekündigt",2028.3,"","Angekündigter X-Men-Film im MCU. Termin vorläufig.",[],[],"E",{ann:true}),
+T("shangchi2","Shang-Chi 2 (Arbeitstitel)","Untitled Shang-Chi Sequel","Film","2028","MCU","P6","other","angekündigt",2028.5,"","Angekündigte Fortsetzung, bislang ohne Termin.",["shangchi"],[],"O",{ann:true}),
+
+/* ---------- Netflix / Defenders ---------- */
+T("ddn1","Daredevil – Staffel 1","Marvel's Daredevil Season 1","Serie","2015-04-10","NET","","defenders","ca. 2014",2014.7,"13 Folgen","Der blinde Anwalt Matt Murdock kämpft nachts als Maskierter in Hell's Kitchen gegen das Verbrechen.",[],["ddn2"],"E"),
+T("jj1","Jessica Jones – Staffel 1","Marvel's Jessica Jones Season 1","Serie","2015-11-20","NET","","defenders","ca. 2014 bis 2015",2014.8,"13 Folgen","Die Privatdetektivin Jessica Jones hat übermenschliche Kräfte und ein Trauma und verfolgt eine Spur aus der Vergangenheit.",[],["lc1","defenders"],"O"),
+T("ddn2","Daredevil – Staffel 2","Marvel's Daredevil Season 2","Serie","2016-03-18","NET","","defenders","ca. 2015",2015.6,"13 Folgen","Neue Gegner und eine Rückkehr aus Matts Vergangenheit stellen Daredevil auf die Probe.",["ddn1"],["defenders","punisher_n1"],"E"),
+T("lc1","Luke Cage – Staffel 1","Marvel's Luke Cage Season 1","Serie","2016-09-30","NET","","defenders","ca. 2015 bis 2016",2015.8,"13 Folgen","Luke Cage mit unverwundbarer Haut versucht in Harlem ein ruhiges Leben, wird aber in einen Machtkampf gezogen.",["jj1"],["defenders","lc2"],"O"),
+T("if1","Iron Fist – Staffel 1","Marvel's Iron Fist Season 1","Serie","2017-03-17","NET","","defenders","ca. 2015 bis 2016",2015.9,"13 Folgen","Danny Rand kehrt nach Jahren in New York zurück und fordert sein Erbe.",[],["defenders","if2"],"O"),
+T("defenders","The Defenders","Marvel's The Defenders","Serie","2017-08-18","NET","","defenders","ca. 2016",2016.0,"8 Folgen","Vier Einzelkämpfer müssen zusammenarbeiten, als eine Bedrohung die ganze Stadt betrifft.",["ddn2","jj1","lc1","if1"],["jj2","lc2","if2","ddn3"],"O"),
+T("punisher_n1","The Punisher – Staffel 1","Marvel's The Punisher Season 1","Serie","2017-11-17","NET","","defenders","ca. 2016 bis 2017",2016.6,"13 Folgen","Frank Castle taucht unter und stößt auf eine Verschwörung im Militär.",["ddn2"],["punisher_n2"],"E"),
+T("jj2","Jessica Jones – Staffel 2","Marvel's Jessica Jones Season 2","Serie","2018-03-08","NET","","defenders","ca. 2017",2017.1,"13 Folgen","Jessica Jones versucht, die Wahrheit hinter ihren Kräften herauszufinden.",["defenders"],["jj3"],"O"),
+T("lc2","Luke Cage – Staffel 2","Marvel's Luke Cage Season 2","Serie","2018-06-22","NET","","defenders","ca. 2017",2017.2,"13 Folgen","Luke Cage verteidigt Harlem, während neue Gegner auftauchen.",["defenders"],[],"O"),
+T("if2","Iron Fist – Staffel 2","Marvel's Iron Fist Season 2","Serie","2018-09-07","NET","","defenders","ca. 2017",2017.3,"10 Folgen","Danny Rand sucht seinen Platz zwischen Stadt und Kampfkunst.",["defenders"],[],"O"),
+T("ddn3","Daredevil – Staffel 3","Marvel's Daredevil Season 3","Serie","2018-10-19","NET","","defenders","ca. 2017 bis 2018",2017.5,"13 Folgen","Matt Murdock versucht, nach den Ereignissen von The Defenders wieder zu sich selbst zu finden.",["defenders"],["ddba1"],"E"),
+T("punisher_n2","The Punisher – Staffel 2","Marvel's The Punisher Season 2","Serie","2019-01-18","NET","","defenders","ca. 2018",2018.0,"13 Folgen","Frank Castle wird in einen Konflikt hineingezogen, in dem er ein Mädchen beschützt.",["punisher_n1"],[],"O"),
+T("jj3","Jessica Jones – Staffel 3","Marvel's Jessica Jones Season 3","Serie","2019-06-14","NET","","defenders","ca. 2018",2018.1,"13 Folgen","Jessica Jones muss sich einem neuen Gegner stellen. Letzte Staffel.",["jj2"],[],"O"),
+
+/* ---------- ABC ---------- */
+T("agentcarter","Marvel's Agent Carter (Staffel 1 und 2)","Marvel's Agent Carter","Serie","2015-01-06","ABC","","cap","1946 bis 1947",1946.0,"18 Folgen","Peggy Carter arbeitet in den 1940er-Jahren nach dem Krieg als Agentin gegen Widerstände und für eine geheime Organisation.",["cap1"],[],"O",{note:"Zwei Staffeln, 2015 und 2016."}),
+T("shield","Marvel's Agents of S.H.I.E.L.D. (Staffel 1 bis 7)","Marvel's Agents of S.H.I.E.L.D.","Serie","2013-09-24","ABC","","shield","2013 bis ca. 2023",2013.5,"136 Folgen","Ein Team von Agenten sichert Gefahren, die nach den Filmen übrig bleiben. Läuft über sieben Staffeln bis 2020.",["avengers1"],[],"O",{soft:["tws"],note:"Ein Eintrag für alle Staffeln. Der Anschluss an die Filme ist locker."}),
+T("inhumans","Marvel's Inhumans","Marvel's Inhumans","Serie","2017-09-29","ABC","","shield","unklar",2017.4,"8 Folgen","Eine königliche Familie mit besonderen Kräften flieht vom Mond auf die Erde. Wurde nach einer Staffel eingestellt.",[],[],"O"),
+
+/* ---------- Fox X-Men ---------- */
+T("xmen00","X-Men","X-Men","Film","2000-07-14","FOX","","xmen","ca. 2000",2000.5,"ca. 104 Min.","Mutanten werden von der Gesellschaft gefürchtet. Zwei Männer mit gegensätzlichen Ansichten, Charles Xavier und Magneto, ringen um ihre Zukunft.",[],["x2"],"O"),
+T("x2","X-Men 2","X2: X-Men United","Film","2003-05-02","FOX","","xmen","ca. 2003",2003.0,"ca. 134 Min.","Ein Angriff auf die Mutantenschule führt zu einem unwilligen Bündnis zwischen alten Gegnern.",["xmen00"],["x3"],"O"),
+T("x3","X-Men: Der letzte Widerstand","X-Men: The Last Stand","Film","2006-05-26","FOX","","xmen","ca. 2006",2006.4,"ca. 104 Min.","Ein angebliches Heilmittel für die Mutation spaltet die Mutanten.",["x2"],["wolverine13"],"O"),
+T("wolvorigins","X-Men Origins: Wolverine","X-Men Origins: Wolverine","Film","2009-05-01","FOX","","xmen","1845 bis 1979",1979.0,"ca. 107 Min.","Die Vorgeschichte von Wolverine und die Experimente, die ihn zu dem machten, was er ist.",["xmen00"],[],"O"),
+T("firstclass","X-Men: Erste Entscheidung","X-Men: First Class","Film","2011-06-03","FOX","","xmen","1962",1962.8,"ca. 132 Min.","Die Anfänge von Professor X und Magneto in den 1960ern, mitten im Kalten Krieg.",[],["dofp"],"O"),
+T("wolverine13","Wolverine: Weg des Kriegers","The Wolverine","Film","2013-07-26","FOX","","xmen","ca. 2013",2013.2,"ca. 126 Min.","Wolverine reist nach Japan, wo er einem alten Bekannten begegnet.",["x3"],["dofp","logan"],"O"),
+T("dofp","X-Men: Zukunft ist Vergangenheit","X-Men: Days of Future Past","Film","2014-05-23","FOX","","xmen","1973 und ferne Zukunft",1973.0,"ca. 132 Min.","Wolverine wird in die 1970er geschickt, um eine Zukunft zu verhindern, in der Mutanten gejagt werden.",["firstclass","x3"],["apocalypse"],"O"),
+T("apocalypse","X-Men: Apocalypse","X-Men: Apocalypse","Film","2016-05-27","FOX","","xmen","1983",1983.0,"ca. 144 Min.","Ein uraltes Wesen erwacht in den 1980ern und will die Welt neu ordnen.",["dofp"],["darkphoenix"],"O"),
+T("deadpool1","Deadpool","Deadpool","Film","2016-02-12","FOX","","deadpool","ca. 2016",2016.1,"ca. 108 Min.","Ein sarkastischer Söldner erhält nach einem Experiment Selbstheilung und will sich an den Verantwortlichen rächen. Ab 16 Jahren.",[],["deadpool2"],"O"),
+T("logan","Logan – The Wolverine","Logan","Film","2017-03-03","FOX","","xmen","2029",2029.0,"ca. 137 Min.","Ein alter, müder Wolverine beschützt in naher Zukunft ein Mädchen mit ähnlichen Kräften. Düster, ab 16.",["wolverine13"],[],"O"),
+T("newmutants","The New Mutants","The New Mutants","Film","2020-08-28","FOX","","xmen","ca. 2017",2017.0,"ca. 94 Min.","Junge Mutanten in einer Klinik versuchen, einer verborgenen Gefahr zu entkommen.",[],[],"O"),
+T("deadpool2","Deadpool 2","Deadpool 2","Film","2018-05-18","FOX","","deadpool","ca. 2018",2018.05,"ca. 119 Min.","Deadpool stellt ein Team zusammen, um einen Jungen vor einem Zeitreisenden zu schützen. Ab 16 Jahren.",["deadpool1"],[],"O"),
+T("darkphoenix","X-Men: Dark Phoenix","Dark Phoenix","Film","2019-06-07","FOX","","xmen","1992",1992.0,"ca. 113 Min.","Jean Grey erhält nach einem Weltraumeinsatz eine Macht, die sie nicht kontrollieren kann.",["apocalypse"],[],"O"),
+
+/* ---------- Fox Fantastic Four ---------- */
+T("ff05","Fantastic Four","Fantastic Four","Film","2005-07-08","FF","","ff","ca. 2005",2005.5,"ca. 106 Min.","Vier Menschen erhalten durch einen Unfall im All übermenschliche Kräfte.",[],["ff07"],"O"),
+T("ff07","Fantastic Four: Rise of the Silver Surfer","Fantastic Four: Rise of the Silver Surfer","Film","2007-06-15","FF","","ff","ca. 2007",2007.45,"ca. 92 Min.","Die Vier müssen einen Boten des Planetenverschlingers stoppen.",["ff05"],[],"O"),
+T("ff15","Fantastic Four","Fantastic Four (2015)","Film","2015-08-07","FF","","ff","ca. 2015",2015.6,"ca. 100 Min.","Ein Neustart der Gruppe mit jüngerer Besetzung und eigenem Ursprung.",[],[],"O"),
+
+/* ---------- Sony ---------- */
+T("sm1","Spider-Man","Spider-Man","Film","2002-05-03","SONY","","spider","ca. 2001 bis 2002",2001.6,"ca. 121 Min.","Der Schüler Peter Parker erhält nach einem Spinnenbiss Kräfte und lernt, damit umzugehen. Regie: Sam Raimi.",[],["sm2"],"O"),
+T("sm2","Spider-Man 2","Spider-Man 2","Film","2004-06-30","SONY","","spider","ca. 2004",2004.3,"ca. 127 Min.","Peter Parker kämpft mit Studium, Job und seinem Doppelleben, als ein genialer Wissenschaftler außer Kontrolle gerät.",["sm1"],["sm3"],"O"),
+T("sm3","Spider-Man 3","Spider-Man 3","Film","2007-05-04","SONY","","spider","ca. 2007",2007.4,"ca. 139 Min.","Peter Parker hat Erfolg, doch eine fremde Substanz und alte Rechnungen setzen ihm zu.",["sm2"],[],"O"),
+T("tasm1","The Amazing Spider-Man","The Amazing Spider-Man","Film","2012-07-03","SONY","","spider","ca. 2011",2011.5,"ca. 136 Min.","Neustart der Reihe: Peter Parker sucht nach der Wahrheit über das Verschwinden seiner Eltern.",[],["tasm2"],"O"),
+T("tasm2","The Amazing Spider-Man 2: Rise of Electro","The Amazing Spider-Man 2","Film","2014-05-02","SONY","","spider","ca. 2013",2013.5,"ca. 142 Min.","Peter Parker trifft auf neue Gegner und muss sich entscheiden, wie viel er für seine Liebsten riskiert.",["tasm1"],[],"O"),
+T("venom1","Venom","Venom","Film","2018-10-05","SONY","","venom","2018",2018.7,"ca. 112 Min.","Ein Reporter verschmilzt mit einer außerirdischen Lebensform. Ohne Spider-Man.",[],["venom2"],"O"),
+T("venom2","Venom: Let There Be Carnage","Venom: Let There Be Carnage","Film","2021-10-01","SONY","","venom","ca. 2019",2019.5,"ca. 97 Min.","Eddie Brock und der Symbiont treffen auf einen gefährlichen Serienmörder.",["venom1"],["venom3"],"O"),
+T("venom3","Venom: The Last Dance","Venom: The Last Dance","Film","2024-10-25","SONY","","venom","ca. 2020",2020.0,"ca. 109 Min.","Eddie und Venom sind auf der Flucht, und beide Welten stellen ihnen nach.",["venom2"],[],"O"),
+T("morbius","Morbius","Morbius","Film","2022-04-01","SONY","","venom","ca. 2019",2019.9,"ca. 104 Min.","Ein todkranker Arzt versucht, sich mit einem riskanten Experiment zu retten.",[],[],"O"),
+T("madameweb","Madame Web","Madame Web","Film","2024-02-14","SONY","","venom","2003",2003.6,"ca. 116 Min.","Eine Rettungssanitäterin entdeckt Visionen von der Zukunft.",[],[],"O"),
+T("kraven","Kraven the Hunter","Kraven the Hunter","Film","2024-12-13","SONY","","venom","unklar",2019.3,"ca. 127 Min.","Ein Jäger mit übermenschlichen Sinnen macht Jagd auf die Gefährlichsten. Ab 16.",[],[],"O"),
+T("spiderverse1","Spider-Man: A New Universe","Spider-Man: Into the Spider-Verse","Animation","2018-12-14","SONY","","spider","Alternative Realität",8010,"ca. 117 Min.","Der Teenager Miles Morales wird zum Spider-Man und trifft auf Spider-Leute aus anderen Dimensionen.",[],["spiderverse2"],"O",{alt:true}),
+T("spiderverse2","Spider-Man: Across the Spider-Verse","Spider-Man: Across the Spider-Verse","Animation","2023-06-02","SONY","","spider","Alternative Realität",8011,"ca. 140 Min.","Miles Morales reist durch das Multiversum und trifft auf eine ganze Gesellschaft von Spider-Leuten.",["spiderverse1"],["spiderverse3"],"O",{alt:true}),
+T("spiderverse3","Spider-Man: Beyond the Spider-Verse","Spider-Man: Beyond the Spider-Verse","Animation","2027-06-18","SONY","","spider","angekündigt",8012,"","Der angekündigte dritte Teil der Spider-Verse-Reihe.",["spiderverse2"],[],"O",{alt:true,ann:true}),
+
+/* ---------- Blade ---------- */
+T("blade1","Blade","Blade","Film","1998-08-21","BLADE","","blade","ca. 1998",1998.5,"ca. 120 Min.","Blade, halb Mensch, halb Vampir, jagt die Vampire, die sich in der menschlichen Gesellschaft versteckt halten. Ab 16.",[],["blade2"],"O"),
+T("blade2","Blade II","Blade II","Film","2002-03-22","BLADE","","blade","ca. 2002",2002.0,"ca. 117 Min.","Blade muss mit ehemaligen Feinden zusammenarbeiten, als eine neue Art von Vampiren auftaucht.",["blade1"],["blade3"],"O"),
+T("blade3","Blade: Trinity","Blade: Trinity","Film","2004-12-08","BLADE","","blade","ca. 2004",2004.9,"ca. 113 Min.","Blade bekommt es mit dem ältesten Vampir zu tun und Hilfe von zwei Jägern.",["blade2"],[],"O")
+];
+
+/* C(id, Name, Alias/Klarname, Franchise, Fähigkeiten[], Hintergrund, Comic, Darsteller, bekanntAus[], Auftritte[ "id" | "!id" = Überraschung ], Entwicklung[[titelId, Text]], gateTitelId) */
+function C(id,name,alias,fr,fae,hint,comic,actor,also,auf,entw,gate){
+  return {id,name,alias,fr,faehigkeiten:fae,hintergrund:hint,comic,darsteller:{name:actor,auch:also},auftritte:auf,entwicklung:entw.map(e=>({titleId:e[0],text:e[1]})),gate:gate||null};
+}
+const CHARS = [
+C("tony","Tony Stark","Iron Man","iron",["Genialer Erfinder und Ingenieur","Gepanzerte Rüstungen mit Flug und Repulsoren","Milliardär mit eigenem Konzern"],
+ "Tony Stark leitet den Rüstungskonzern Stark Industries und ist ein Genie mit großem Ego. Als er in Gefangenschaft gerät, baut er sich eine gepanzerte Rüstung.",
+ "Tales of Suspense #39 (1963) von Stan Lee, Larry Lieber, Don Heck und Jack Kirby. Im Comic entsteht die erste Rüstung noch im Vietnamkrieg, der Film verlegt das nach Afghanistan.",
+ "Robert Downey Jr.",["Sherlock Holmes (2009)","Tropic Thunder","Oppenheimer"],
+ ["ironman","!hulk","ironman2","avengers1","ironman3","aou","civilwar","homecoming","iw","endgame","whatif1"],
+ [["ironman","Baut seine erste Rüstung, ändert die Ausrichtung seines Konzerns und gibt sich am Ende als Iron Man zu erkennen."],["avengers1","Wird Teil des ersten Avengers-Teams und verteidigt New York gegen eine Invasion."],["ironman3","Leidet nach New York unter Angstattacken und baut obsessiv neue Rüstungen."],["aou","Sein Schutzprogramm Ultron gerät außer Kontrolle."],["civilwar","Unterstützt das Sokovia-Abkommen und zerstreitet sich darüber mit Steve Rogers."],["homecoming","Wird Mentor des jungen Peter Parker."],["iw","Folgt Doctor Strange ins All und kämpft auf Titan gegen Thanos."],["endgame","Hilft bei der Zeitreise-Mission und opfert sich im Finale, um Thanos zu stoppen."]]),
+C("steve","Steve Rogers","Captain America","cap",["Supersoldaten-Serum: Kraft, Tempo, Ausdauer","Vibranium-Schild","Taktisches Genie und Nahkampf"],
+ "Ein schmächtiger Freiwilliger aus Brooklyn will im Zweiten Weltkrieg unbedingt mitkämpfen und wird für ein Armee-Experiment ausgewählt.",
+ "Captain America Comics #1 (1941) von Joe Simon und Jack Kirby. Das erste Cover zeigt, wie er Hitler schlägt; der Film erzählt ruhiger den Weg vom Freiwilligen zum Soldaten.",
+ "Chris Evans",["Fantastic Four (2005), als Johnny Storm","Snowpiercer","Knives Out"],
+ ["cap1","avengers1","!thor2","tws","aou","civilwar","iw","endgame","whatif1"],
+ [["cap1","Wird zum ersten gelungenen Supersoldaten und verschwindet am Ende im Eis. Jahrzehnte später erwacht er in der Gegenwart."],["avengers1","Findet in der Gegenwart ein neues Team."],["tws","Deckt mit Natasha und Sam eine Verschwörung bei S.H.I.E.L.D. auf und begegnet seinem alten Freund wieder."],["civilwar","Stellt sich gegen das Sokovia-Abkommen und schützt Bucky."],["iw","Kehrt aus dem Untergrund zurück und kämpft in Wakanda gegen Thanos' Armee."],["endgame","Bringt die Steine in ihre Zeit zurück, bleibt dort und führt ein eigenes Leben. Sein Schild geht an Sam."]]),
+C("thor","Thor Odinson","Thor, Gott des Donners","thor",["Mjölnir: Blitz, Flug, Schlagkraft","Übermenschliche Stärke und Ausdauer","Göttliche Kampferfahrung"],
+ "Thor ist der Thronfolger von Asgard, mächtig, stolz und leichtsinnig. Sein Vater schickt ihn auf die Erde, damit er Demut lernt.",
+ "Journey into Mystery #83 (1962) von Stan Lee, Larry Lieber und Jack Kirby. Im Comic erscheint Thor zunächst als der Arzt Donald Blake, der einen Stock in einen Hammer verwandelt; der Film macht ihn direkt zum Asgardianer.",
+ "Chris Hemsworth",["Rush (2013)","Extraction","Furiosa"],
+ ["thor","avengers1","thor2","aou","!strange","ragnarok","iw","endgame","thorlt","whatif1"],
+ [["thor","Wird auf die Erde verbannt, lernt Demut und kann am Ende wieder Mjölnir führen."],["avengers1","Holt Loki zurück und kämpft mit den Avengers gegen die Invasion."],["ragnarok","Verliert auf dem Planeten Sakaar seine Freiheit, sein Auge und letztlich Asgard samt Mjölnir, kehrt aber als König seines Volkes zurück."],["iw","Überlebt den Angriff auf Asgards Flüchtlinge und besorgt sich in Nidavellir eine neue Axt."],["endgame","Verfällt nach dem Scheitern in Selbstzweifel, übergibt später die Königswürde und schließt sich den Guardians an."],["thorlt","Sucht seinen Platz, trifft Jane Foster wieder und stellt sich Gorr dem Götterschlächter."]]),
+C("hulk","Bruce Banner","Hulk","hulk",["Verwandlung in den Hulk: gewaltige Stärke","Schnelle Heilung","Genialer Wissenschaftler (Gammastrahlung)"],
+ "Der Physiker Bruce Banner wurde bei einem Experiment mit Gammastrahlung verändert. Gerät er in Wut, verwandelt er sich in den Hulk, und das Militär jagt ihn.",
+ "The Incredible Hulk #1 (1962) von Stan Lee und Jack Kirby. Der erste Hulk war grau (ein Druckproblem machte ihn grün) und verwandelte sich ursprünglich bei Sonnenuntergang.",
+ "Mark Ruffalo (ab The Avengers); Edward Norton im Film von 2008",["Spotlight","Zodiac","Poor Things"],
+ ["hulk","avengers1","aou","ragnarok","iw","endgame","!shangchi","shehulk"],
+ [["hulk","Auf der Flucht vor General Ross und seiner Armee sucht er ein Heilmittel."],["avengers1","Setzt die Verwandlung erstmals bewusst für ein Team ein."],["aou","Verlässt nach einer Katastrophe die Erde im Flugzeug der Avengers."],["ragnarok","Wird auf Sakaar zum Gladiator und ist tagelang nur der Hulk."],["iw","Kehrt als Banner zurück, weil der Hulk sich nicht mehr zeigen will."],["endgame","Verbindet nach fünf Jahren Verstand und Kraft zum „Smart Hulk“."],["shehulk","Überträgt per Bluttransfusion seine Kräfte auf Cousine Jennifer Walters."]]),
+C("natasha","Natasha Romanoff","Black Widow","avengers",["Spionin und Meisterin im Nahkampf","Bewaffnet mit Widow's Bite","Verhörspezialistin"],
+ "Eine hochtrainierte Agentin von S.H.I.E.L.D., die zuerst als Tony Starks Assistentin getarnt auftritt.",
+ "Tales of Suspense #52 (1964) von Stan Lee, Don Rico und Don Heck. Im Comic beginnt sie als russische Spionin und Gegnerin von Iron Man.",
+ "Scarlett Johansson",["Lost in Translation","Marriage Story","Her (Stimme)"],
+ ["ironman2","avengers1","tws","aou","civilwar","iw","endgame","blackwidow","whatif1"],
+ [["ironman2","Wird als Spionin im Hintergrund eingeführt."],["avengers1","Verhört Loki und überzeugt Bruce, mitzuhelfen."],["tws","Wird von ihrer eigenen Vergangenheit eingeholt, als S.H.I.E.L.D. fällt."],["civilwar","Stellt sich zunächst auf Tonys Seite, hilft Steve aber im entscheidenden Moment."],["endgame","Opfert sich auf Vormir, damit die Avengers den Seelenstein bekommen."],["blackwidow","Trifft ihre „Familie“ aus Kindertagen wieder."]]),
+C("clint","Clint Barton","Hawkeye","avengers",["Meisterschütze mit Pfeil und Bogen","Speziell präparierte Pfeile","Agenten-Training"],
+ "Ein S.H.I.E.L.D.-Agent und Scharfschütze. Er taucht zuerst nur kurz im Hintergrund auf.",
+ "Tales of Suspense #57 (1964) von Stan Lee und Don Heck. Im Comic tritt Hawkeye zunächst als Gegner von Iron Man auf.",
+ "Jeremy Renner",["The Hurt Locker","Arrival","Mission: Impossible"],
+ ["thor","avengers1","aou","civilwar","endgame","hawkeye"],
+ [["avengers1","Wird von Loki kontrolliert und kämpft gegen seine Freunde."],["aou","Hat eine Familie und ein verstecktes Haus."],["endgame","Verliert durch Thanos’ Fingerschnipsen seine Familie und wird zum Rächer Ronin."],["hawkeye","Will Weihnachten mit der Familie, bildet Kate Bishop aus und stellt sich seiner Ronin-Vergangenheit."]]),
+C("fury","Nick Fury","Direktor von S.H.I.E.L.D.","avengers",["Taktiker und Geheimdienstler","Waffen- und Kampftraining","Netzwerk aus Agenten"],
+ "Der Direktor von S.H.I.E.L.D., der Superhelden zu einem Team zusammenführen will.",
+ "Sgt. Fury and His Howling Commandos #1 (1963) von Stan Lee und Jack Kirby. Die Film-Version geht auf die Ultimate-Comics (2002) zurück, deren Fury nach dem Aussehen von Samuel L. Jackson gezeichnet wurde.",
+ "Samuel L. Jackson",["Pulp Fiction","Django Unchained","Star Wars (Mace Windu)"],
+ ["!ironman","ironman2","thor","avengers1","tws","aou","cm","ffh","secretinvasion","marvels"],
+ [["tws","S.H.I.E.L.D. fällt, er täuscht seinen Tod vor."],["cm","Trifft als junger Agent in den 1990ern auf Carol Danvers."],["ffh","Der vermeintliche Fury ist in Wahrheit der Skrull Talos, der Fury vertritt."],["secretinvasion","Kehrt von seiner Raumstation zurück und stellt sich einem Skrull-Aufstand."]]),
+C("loki","Loki","Gott des Unfugs","thor",["Magie und Illusionen","Gestaltwandlung","Übermenschliche Kraft und Langlebigkeit"],
+ "Thors jüngerer Bruder, charmant, listig und voller Ehrgeiz.",
+ "Journey into Mystery #85 (1962) von Stan Lee, Larry Lieber und Jack Kirby. Im Comic ist Loki zunächst der Schurke, später auch Antiheld.",
+ "Tom Hiddleston",["Crimson Peak","The Night Manager","Kong: Skull Island"],
+ ["thor","avengers1","thor2","ragnarok","iw","!endgame","loki1","loki2","whatif1"],
+ [["thor","Erfährt, dass er adoptiert ist und von Asgards Feinden abstammt. Am Ende stürzt er in einen Abgrund."],["avengers1","Führt eine Invasion der Erde an und wird besiegt."],["thor2","Wird Thors unfreiwilliger Verbündeter."],["ragnarok","Versucht erst Thor zu hintergehen, kämpft dann für Asgard."],["iw","Wird von Thanos getötet."],["endgame","Eine Variante aus dem Jahr 2012 entkommt mit dem Tesseract."],["loki1","Die Variante wird von der TVA festgenommen und trifft auf Sylvie."],["loki2","Springt unfreiwillig durch die Zeit und trägt am Ende eine neue Verantwortung."]]),
+C("thanos","Thanos","Der Mad Titan","avengers",["Übermenschliche Stärke und Zähigkeit","Taktisches Genie","Setzt die Infinity-Steine ein"],
+ "Er taucht zuerst nur als Gestalt im Hintergrund auf und schickt Loki auf die Erde.",
+ "The Invincible Iron Man #55 (1973) von Jim Starlin. Im Comic will er die personifizierte Todesgöttin beeindrucken; im Film steckt eine andere Motivation dahinter.",
+ "Josh Brolin",["No Country for Old Men","Sicario","Dune"],
+ ["!avengers1","gotg1","!aou","iw","endgame"],
+ [["gotg1","Wird als Auftraggeber von Ronan und Gamora vorgestellt."],["iw","Sammelt die Infinity-Steine und führt seinen Plan aus."],["endgame","Wird von den Avengers mit Zeitreisen konfrontiert; seine Geschichte endet."]]),
+C("bucky","James Buchanan Barnes","Bucky","cap",["Kampftraining","Schusswaffen und Hand-zu-Hand","Zeitweise: Metallarm"],
+ "Steves bester Freund aus Brooklyn, der im Zweiten Weltkrieg als Soldat dient.",
+ "Captain America Comics #1 (1941) von Joe Simon und Jack Kirby. Im Comic beginnt er als jugendlicher Gefährte (Sidekick).",
+ "Sebastian Stan",["I, Tonya","Pam & Tommy","A Different Man"],
+ ["cap1","tws","civilwar","iw","endgame","tfatws","thunderbolts","whatif1"],
+ [["cap1","Stürzt bei einer Mission scheinbar in den Tod."],["tws","Taucht als Auftragsmörder „Winter Soldier“ wieder auf, ohne sich zu erinnern."],["civilwar","Gerät unter Verdacht und wird zum Gejagten."],["tfatws","Arbeitet seine Taten auf und sucht Wiedergutmachung."],["thunderbolts","Ist inzwischen Abgeordneter im Kongress."]]),
+C("sam","Sam Wilson","Falcon","cap",["Flugfähiger Anzug mit Flügeln","Ausgebildeter Luftkämpfer","Drohne Redwing"],
+ "Ein Veteran, der im Reha-Zentrum anderen Soldaten hilft und dort auf Steve Rogers trifft.",
+ "Captain America #117 (1969) von Stan Lee und Gene Colan. Einer der ersten afroamerikanischen Superhelden im Mainstream-Comic.",
+ "Anthony Mackie",["8 Mile","The Hurt Locker","Altered Carbon"],
+ ["tws","antman","civilwar","iw","endgame","tfatws","bnw"],
+ [["tws","Wird Steves Verbündeter und trägt einen Flügelanzug."],["civilwar","Kämpft für Steve und landet in Haft."],["endgame","Bekommt von Steve das Schild."],["tfatws","Zögert, das Schild anzunehmen, und wird schließlich Captain America."],["bnw","Als neuer Captain America steht er im Zentrum einer internationalen Krise."]]),
+C("rhodey","James „Rhodey“ Rhodes","War Machine","iron",["Schwere Panzerrüstung mit Waffen","Militärische Ausbildung","Flug"],
+ "Tonys bester Freund und Verbindungsmann zur Air Force.",
+ "Iron Man #118 (1979) von David Michelinie und Bob Layton.",
+ "Don Cheadle (Terrence Howard im ersten Film)",["Hotel Rwanda","Ocean's Eleven","House of Lies"],
+ ["ironman","ironman2","ironman3","aou","civilwar","iw","endgame","secretinvasion"],
+ [["ironman2","Setzt eine Rüstung als „War Machine“ ein."],["civilwar","Wird bei einem Gefecht schwer verletzt und läuft mit Hilfe von Stützen."],["secretinvasion","Es stellt sich heraus, dass ein Skrull seinen Platz eingenommen hatte."]]),
+C("wanda","Wanda Maximoff","Scarlet Witch","avengers",["Telekinese","Rote Energie","Gedankenmanipulation"],
+ "Wanda stammt aus dem osteuropäischen Sokovia. Ihre Fähigkeiten wurden von HYDRA durch ein Experiment geweckt.",
+ "X-Men #4 (1964) von Stan Lee und Jack Kirby. Im Comic ist Wanda eine Mutantin und Tochter von Magneto; das MCU erklärt die Kräfte anders.",
+ "Elizabeth Olsen",["Martha Marcy May Marlene","Wind River","Godzilla (2014)"],
+ ["!tws","aou","civilwar","iw","endgame","wandavision","mom"],
+ [["aou","Schließt sich erst Ultron an und wechselt dann zu den Avengers; wird als „Scarlet Witch“ bekannt."],["civilwar","Wird nach einem Unfall zum Gegenstand der Debatte um das Abkommen."],["iw","Muss Vision opfern und kann Thanos' Sieg nicht verhindern."],["wandavision","Erschafft in Westview eine Sitcom-Welt aus Trauer."],["mom","Jagt America Chavez und stellt sich gegen Strange."]]),
+C("vision","Vision","Der Android der Avengers","avengers",["Flug und Phasing","Hochgeschwindigkeits-Analyse","Energiestrahlen aus dem Stirnjuwel"],
+ "Ein künstliches Wesen mit leuchtendem Stirnjuwel, das in Age of Ultron zum Team stößt. Seine Stimme kennt man schon früher als J.A.R.V.I.S.",
+ "Avengers #57 (1968) von Roy Thomas und John Buscema. Im Comic erschafft Ultron ihn, um die Avengers zu zerstören.",
+ "Paul Bettany",["A Beautiful Mind","The Da Vinci Code","Master and Commander"],
+ ["aou","civilwar","iw","wandavision","visionquest"],
+ [["aou","Wird aus Tonys KI, Banners Forschung und dem Juwel erschaffen und fühlt sich würdig, Mjölnir zu heben."],["iw","Wird in Wakanda von Thanos getötet."],["wandavision","Taucht als Ehemann in Westview auf, ist aber nicht, was er scheint."],["visionquest","Bekommt eine eigene Serie."]],"aou"),
+C("scott","Scott Lang","Ant-Man","ant",["Schrumpfen auf Insektengröße","Steuerung von Ameisen","Zurück zu normaler Größe mit voller Kraft"],
+ "Ein Elektroingenieur und Ex-Häftling, der wieder Fuß fassen will und von Hank Pym ein Angebot bekommt.",
+ "Marvel Premiere #47 (1979) von David Michelinie und John Byrne; der erste Ant-Man, Hank Pym, debütierte in Tales to Astonish #27 (1962) von Stan Lee, Larry Lieber und Jack Kirby.",
+ "Paul Rudd",["Clueless","Anchorman","Friends (Mike)"],
+ ["antman","civilwar","antwasp","endgame","quantumania"],
+ [["civilwar","Wird von Steve für den Kampf gegen Tonys Team angeheuert."],["antwasp","Steht unter Hausarrest und hilft Hope und Hank."],["endgame","Kommt aus dem Quantenreich zurück und bringt die Idee der Zeitreise mit."],["quantumania","Gerät mit der Familie ins Quantenreich."]]),
+C("hope","Hope van Dyne","Wasp","ant",["Schrumpfen und Wachsen","Flug mit Flügeln","Waffenstachel"],
+ "Hank Pyms Tochter, die als Managerin im Familienunternehmen arbeitet.",
+ "Die erste Wasp, Janet van Dyne, debütierte in Tales to Astonish #44 (1963) von Stan Lee, Ernie Hart und Jack Kirby. Im Film übernimmt Hope die Rolle.",
+ "Evangeline Lilly",["Lost","The Hobbit (Tauriel)","Real Steel"],
+ ["antman","antwasp","endgame","quantumania"],
+ [["antwasp","Wird zur Wasp und kämpft an Scotts Seite."],["endgame","Zählt zu den Rückkehrern im Finale."],["quantumania","Muss mit ihrer Mutter Janet und dem Quantenreich klarkommen."]]),
+C("strange","Stephen Strange","Doctor Strange","strange",["Magie und Portale","Zeitmanipulation","Astralreisen"],
+ "Ein berühmter Neurochirurg verliert nach einem Unfall seine Karriere und lernt die Magie kennen.",
+ "Strange Tales #110 (1963) von Steve Ditko und Stan Lee. Im Comic wird die Rolle des Ancient One klassisch als alter tibetischer Mann dargestellt.",
+ "Benedict Cumberbatch",["Sherlock","The Imitation Game","The Power of the Dog"],
+ ["strange","ragnarok","iw","endgame","nwh","mom"],
+ [["iw","Übergibt Thanos den Zeitstein, um ein größeres Ziel zu verfolgen."],["nwh","Versucht, einen Zauber zu wirken, der die Welt Peters Identität vergessen lassen soll, und verursacht damit einen Riss im Multiversum."],["mom","Reist durchs Multiversum und begegnet Varianten seiner selbst."]]),
+C("wong","Wong","Meister der mystischen Künste","strange",["Magie und Portale","Zauberer mit Bibliotheks-Wissen","Kampfkunst"],
+ "Ein Bibliothekar und Wächter in Kamar-Taj, der Strange früh begegnet.",
+ "Strange Tales #110 (1963) von Steve Ditko und Stan Lee. Im Comic ist Wong zunächst ein treuer Diener.",
+ "Benedict Wong",["Marco Polo","The Martian","3 Body Problem"],
+ ["strange","iw","endgame","shangchi","nwh","mom","shehulk"],
+ [["mom","Ist inzwischen Oberster Zauberer und führt Kamar-Taj."],["shehulk","Hilft Jennifer Walters mit Magie bei ihrer Hulk-Rolle."]]),
+C("peter","Peter Parker","Spider-Man (Tom Holland)","spider",["Wandkriechen und Spinnensinn","Übermenschliche Reflexe","Netzwerfer"],
+ "Ein Schüler aus Queens, der nach einem Spinnenbiss Kräfte hat und als maskierter Helfer Menschen in seiner Nachbarschaft schützt.",
+ "Amazing Fantasy #15 (1962) von Stan Lee und Steve Ditko. Im Comic arbeitet er als Fotograf beim Daily Bugle, die MCU-Version konzentriert sich auf den Schüleralltag.",
+ "Tom Holland",["The Impossible","Cherry","Uncharted"],
+ ["civilwar","homecoming","iw","endgame","ffh","nwh","bnd"],
+ [["civilwar","Wird von Tony Stark für den Konflikt angeworben."],["homecoming","Will beweisen, dass er ein echter Held sein kann."],["iw","Kämpft auf Titan und löst sich am Ende auf."],["endgame","Kehrt aus dem Nichts zurück und hilft bei der Schlacht."],["ffh","Fühlt sich unter Druck, Tonys Nachfolger zu sein."],["nwh","Seine Identität wird öffentlich; ein Zauber geht schief und holt andere Spider-Men in seine Welt."]]),
+C("tchalla","T'Challa","Black Panther","panther",["Verbesserte Kraft durch Kräuter","Anzug aus Vibranium","Meister der Kampfkunst"],
+ "Kronprinz des abgeschotteten afrikanischen Staates Wakanda.",
+ "Fantastic Four #52 (1966) von Stan Lee und Jack Kirby. Gilt als erster schwarzer Superheld im Mainstream-Comic.",
+ "Chadwick Boseman",["42","Get on Up","Da 5 Bloods"],
+ ["civilwar","panther","iw","endgame","whatif1"],
+ [["civilwar","Sucht Rache für den Tod seines Vaters."],["panther","Wird König und muss Wakandas Rolle in der Welt klären."],["iw","Verteidigt Wakanda an Steves Seite."],["endgame","Kehrt nach den fünf Jahren zurück."]]),
+C("shuri","Shuri","Prinzessin von Wakanda","panther",["Technik-Genie","Entwicklerin des Anzugs","Kämpferin"],
+ "T'Challas jüngere Schwester, die Wakandas Technik leitet.",
+ "Black Panther (Band 4) #2 (2005) von Reginald Hudlin und John Romita Jr.",
+ "Letitia Wright",["Black Mirror","Death on the Nile","Small Axe"],
+ ["panther","iw","endgame","bpwf"],
+ [["iw","Hilft, Vision zu retten, und kämpft in Wakanda."],["bpwf","Muss Wakanda in einer schweren Zeit führen."]]),
+C("carol","Carol Danvers","Captain Marvel","marvel",["Energieprojektion und Flug","Übermenschliche Stärke","Kann im All überleben"],
+ "Eine Kämpferin mit Gedächtnislücken, die sich plötzlich in einem Krieg zwischen zwei Alien-Völkern wiederfindet.",
+ "Marvel Super-Heroes #13 (1968) von Roy Thomas und Gene Colan; im Comic war sie zunächst Ms. Marvel.",
+ "Brie Larson",["Room","Short Term 12","Kong: Skull Island"],
+ ["cm","endgame","marvels","!msmarvel"],
+ [["cm","Entdeckt, wer sie wirklich ist."],["endgame","Kommt zum Finale und bringt die Entscheidung."],["marvels","Tauscht beim Einsatz von Kräften Plätze mit Kamala und Monica."]]),
+C("quill","Peter Quill","Star-Lord","gotg",["Kampfausbildung und Tricks","Maske und Raketenstiefel","Anführer der Guardians"],
+ "Ein Junge, der von der Erde entführt wurde und als Weltraum-Gauner groß wird.",
+ "Marvel Preview #4 (1976) von Steve Englehart und Steve Gan; die Film-Guardians folgen der Neuauflage ab 2008 von Dan Abnett und Andy Lanning.",
+ "Chris Pratt",["Parks and Recreation","Jurassic World","Moneyball"],
+ ["gotg1","gotg2","iw","endgame","thorlt","holiday","gotg3"],
+ [["gotg1","Findet in den Außenseitern eine neue Familie."],["gotg2","Lernt seinen Vater kennen."],["iw","Verliert auf Titan die Beherrschung."],["gotg3","Hat mit dem Verlust von Gamora zu kämpfen und kämpft für Rocket."]]),
+C("gamora","Gamora","Die tödlichste Frau der Galaxis","gotg",["Meisterin im Schwertkampf","Übermenschliche Schnelligkeit","Zähigkeit"],
+ "Eine gefährliche Auftragskämpferin mit eigener Agenda.",
+ "Strange Tales #180 (1975) von Jim Starlin.",
+ "Zoe Saldaña",["Avatar","Star Trek","Colombiana"],
+ ["gotg1","gotg2","iw","endgame","gotg3"],
+ [["iw","Wird von Thanos auf Vormir geopfert."],["endgame","Eine Variante aus 2014 spielt eine Rolle."],["gotg3","Eine Variante von ihr hat keine Erinnerung an die Guardians."]]),
+C("rocket","Rocket","Rocket Raccoon","gotg",["Genialer Waffenbauer","Pilot","Taktiker"],
+ "Ein genetisch veränderter Waschbär mit Hang zu großen Waffen.",
+ "Marvel Preview #7 (1976) von Bill Mantlo und Keith Giffen.",
+ "Bradley Cooper (Stimme), Sean Gunn (Set)",["Silver Linings Playbook","American Sniper","A Star Is Born"],
+ ["gotg1","gotg2","iw","endgame","thorlt","holiday","gotg3"],
+ [["gotg3","Seine Herkunft steht im Mittelpunkt."]]),
+C("groot","Groot","Flora colossus","gotg",["Wachstum und Regeneration","Starke Äste","Teilt sich"],
+ "Ein baumartiger Humanoid, der nur drei Worte sagt.",
+ "Tales to Astonish #13 (1960) von Stan Lee, Larry Lieber und Jack Kirby. Im Comic war Groot zunächst ein Monster.",
+ "Vin Diesel (Stimme)",["Fast & Furious","The Iron Giant","Riddick"],
+ ["gotg1","gotg2","iw","endgame","thorlt","holiday","gotg3"],
+ [["gotg1","Opfert sich, um die Gruppe zu retten, und wächst später als Sprössling wieder."],["gotg2","Ist als Baby-Groot unterwegs."]]),
+C("drax","Drax","Der Zerstörer","gotg",["Übermenschliche Kraft","Messerkampf","Taktisches Denken"],
+ "Ein Krieger, der den Mörder seiner Familie sucht und alles wörtlich nimmt.",
+ "Iron Man #55 (1973) von Jim Starlin.",
+ "Dave Bautista",["Blade Runner 2049","Dune","Glass Onion"],
+ ["gotg1","gotg2","iw","endgame","thorlt","holiday","gotg3"],
+ [["gotg1","Verbündet sich mit den Guardians."],["iw","Wird Opfer von Thanos' Plan."]]),
+C("nebula","Nebula","Gamoras Schwester","gotg",["Cyborg-Implantate","Kampfkunst","Taktisches Können"],
+ "Gamoras Schwester und Rivalin, die mit ihrer Familie eine Rechnung offen hat.",
+ "Avengers #257 (1985) von Roger Stern und John Buscema.",
+ "Karen Gillan",["Doctor Who","Jumanji","Dual"],
+ ["gotg1","gotg2","iw","endgame","gotg3"],
+ [["gotg2","Wird von einer Bedrohung zur Verbündeten."],["endgame","Eine Version aus 2014 versucht, Thanos zum Sieg zu führen, doch die Gegenwart-Nebula stoppt sie."]]),
+C("shangchi","Shang-Chi","Meister des Kung-Fu","other",["Kung-Fu und Kampfkunst","Beherrscht die Zehn Ringe","Taktisches Talent"],
+ "Ein junger Mann in San Francisco, der ein unauffälliges Leben führt und von der Organisation der Zehn Ringe eingeholt wird.",
+ "Special Marvel Edition #15 (1973) von Steve Englehart und Jim Starlin. Im Comic ist er ursprünglich der Sohn von Fu Manchu, der Film ersetzt das.",
+ "Simu Liu",["Kim's Convenience","Barbie","Atlanta"],
+ ["shangchi"],
+ [["shangchi","Stellt sich seinem Vater und tritt das Erbe an."]]),
+C("kamala","Kamala Khan","Ms. Marvel","marvel",["Körper dehnen und vergrößern","Energiekonstrukte","Heilung"],
+ "Eine Schülerin aus Jersey City, die Superhelden liebt und selbst Kräfte erhält.",
+ "Captain Marvel #14 (2013) von G. Willow Wilson und Adrian Alphona. Im Comic hat sie andere Ursprünge als im MCU.",
+ "Iman Vellani",["Ms. Marvel (2022), erste große Rolle","The Marvels (2023)"],
+ ["msmarvel","marvels"],
+ [["msmarvel","Entdeckt ihre Kräfte und die Geschichte ihrer Familie."],["marvels","Tauscht bei Einsatz ihrer Kräfte die Plätze mit Carol und Monica."]]),
+C("kate","Kate Bishop","Hawkeye","avengers",["Bogenschützin","Fechten","Hartnäckigkeit"],
+ "Eine junge Bogenschützin aus New York und Fan von Hawkeye.",
+ "Young Avengers #1 (2005) von Allan Heinberg und Jim Cheung.",
+ "Hailee Steinfeld",["True Grit","Pitch Perfect 2","Spider-Man: A New Universe (Stimme von Gwen Stacy)"],
+ ["hawkeye"],
+ [["hawkeye","Wird in Clint Bartons Welt gezogen und übernimmt den Namen Hawkeye."]]),
+C("yelena","Yelena Belova","Black Widow","avengers",["Ausgebildete Agentin","Hand-zu-Hand-Kampf","Spezialausrüstung"],
+ "Natashas „Schwester“ aus der Zeit im Red Room.",
+ "Inhumans (Band 2) #5 (1999) von Paul Jenkins und Jae Lee.",
+ "Florence Pugh",["Midsommar","Little Women","Oppenheimer"],
+ ["blackwidow","!hawkeye","thunderbolts"],
+ [["blackwidow","Befreit sich aus dem Programm."],["hawkeye","Wird auf Clint angesetzt."],["thunderbolts","Gehört zu einem Team von Außenseitern."]]),
+C("marc","Marc Spector","Moon Knight","other",["Kampfkunst","Verbindung zum Gott Khonshu","Mehrere Identitäten"],
+ "Ein schüchterner Museumsangestellter mit Gedächtnislücken und Stimmen im Kopf.",
+ "Werewolf by Night #32 (1975) von Doug Moench und Don Perlin.",
+ "Oscar Isaac",["Ex Machina","Dune","Star Wars (Poe Dameron)"],
+ ["moonknight"],
+ [["moonknight","Klärt auf, wer in seinem Kopf lebt, und entscheidet sich."]]),
+C("jen","Jennifer Walters","She-Hulk","hulk",["Hulk-Stärke bei voller Kontrolle","Anwältin","Durchbrechen der vierten Wand"],
+ "Eine Anwältin, die nach einem Unfall zu She-Hulk wird.",
+ "The Savage She-Hulk #1 (1980) von Stan Lee und John Buscema.",
+ "Tatiana Maslany",["Orphan Black","Perry Mason","Ginger Snaps"],
+ ["shehulk"],
+ [["shehulk","Lernt, ihr neues Leben und ihre Karriere zu verbinden."]]),
+C("matt","Matt Murdock","Daredevil","defenders",["Radar-Sinn und geschärfte Sinne","Akrobatik","Anwalt"],
+ "Ein blinder Anwalt in Hell's Kitchen, der nachts maskiert für Gerechtigkeit sorgt.",
+ "Daredevil #1 (1964) von Stan Lee und Bill Everett. In den frühen Comics trug er ein gelb-rotes Kostüm.",
+ "Charlie Cox",["Boardwalk Empire","Stardust","The Theory of Everything"],
+ ["ddn1","ddn2","defenders","ddn3","!shehulk","!nwh","!echo","ddba1","ddba2"],
+ [["ddn1","Wird zum Rächer in Hell's Kitchen."],["defenders","Schließt sich mit Jessica, Luke und Danny zusammen."],["nwh","Hilft Peter Parker auf anwaltlichem Weg."],["ddba1","Stellt sich als Anwalt gegen Fisks neue Macht."]]),
+C("fisk","Wilson Fisk","Kingpin","defenders",["Überragende Körperkraft","Kriminelles Netzwerk","Finanzimperium"],
+ "Ein Geschäftsmann in Hell's Kitchen, der die Stadt nach seinen Vorstellungen umbauen will.",
+ "The Amazing Spider-Man #50 (1967) von Stan Lee und John Romita Sr. Im Comic ist er zuerst Spider-Mans Gegner.",
+ "Vincent D'Onofrio",["Full Metal Jacket","Men in Black","Law & Order: Criminal Intent"],
+ ["ddn1","ddn2","ddn3","!hawkeye","!echo","ddba1","ddba2"],
+ [["ddn1","Kämpft gegen Daredevil um die Stadt."],["hawkeye","Taucht als Strippenzieher im Hintergrund auf."],["ddba1","Wird Bürgermeister von New York."]]),
+C("frank","Frank Castle","Punisher","defenders",["Ex-Marine und Waffenexperte","Verhörexperte","Gnadenlos"],
+ "Ein Kriegsveteran auf einem persönlichen Rachefeldzug gegen Kriminelle in New York.",
+ "The Amazing Spider-Man #129 (1974) von Gerry Conway, John Romita Sr. und Ross Andru.",
+ "Jon Bernthal",["The Walking Dead","The Wolf of Wall Street","The Bear"],
+ ["ddn2","punisher_n1","punisher_n2","ddba2","punisher_special"],
+ [["ddn2","Taucht als zweifelhafter Verbündeter und Gegner von Daredevil auf."],["punisher_n1","Findet Spuren einer Verschwörung."]]),
+C("jessica","Jessica Jones","Privatdetektivin","defenders",["Übermenschliche Stärke","Sprungkraft","Detektivin"],
+ "Eine Privatdetektivin mit Trauma und einer Vorliebe für Alkohol.",
+ "Alias #1 (2001) von Brian Michael Bendis und Michael Gaydos.",
+ "Krysten Ritter",["Breaking Bad","Don't Trust the B---- in Apartment 23","Veronica Mars"],
+ ["jj1","defenders","jj2","jj3"],
+ [["jj1","Stellt sich dem Mann, der sie einst kontrolliert hat."]]),
+C("logan","Logan","Wolverine","xmen",["Heilkräfte","Adamantium-Klauen","Geschärfte Sinne"],
+ "Ein Mutant ohne Erinnerung an seine Vergangenheit, mit Heilkräften und Metallklauen.",
+ "The Incredible Hulk #180 (1974) von Len Wein, Herb Trimpe und John Romita Sr. Im Comic ist er kleiner und stämmiger als Hugh Jackman.",
+ "Hugh Jackman",["Les Misérables","The Greatest Showman","Prisoners"],
+ ["xmen00","x2","x3","wolvorigins","!firstclass","wolverine13","dofp","!apocalypse","logan","dw"],
+ [["xmen00","Findet bei Xavier ein Zuhause und trifft Rogue."],["logan","Ist alt, zermürbt und beschützt ein Mädchen mit ähnlichen Kräften."],["dw","Eine Variante tut sich mit Deadpool zusammen."]]),
+C("wade","Wade Wilson","Deadpool","deadpool",["Selbstheilung","Schwertkampf und Schusswaffen","Vierte-Wand-Humor"],
+ "Ein sarkastischer Söldner, der nach einem Experiment Selbstheilung hat.",
+ "The New Mutants #98 (1991) von Rob Liefeld und Fabian Nicieza.",
+ "Ryan Reynolds",["Van Wilder","Free Guy","The Proposal"],
+ ["wolvorigins","deadpool1","deadpool2","dw"],
+ [["deadpool1","Rächt sich an den Verantwortlichen."],["dw","Wird von der TVA angeworben."]]),
+C("xavier","Charles Xavier","Professor X","xmen",["Telepathie","Brillanter Geist","Gründer der Schule für Mutanten"],
+ "Ein mächtiger Telepath und Gründer einer Schule für junge Mutanten.",
+ "The X-Men #1 (1963) von Stan Lee und Jack Kirby.",
+ "Patrick Stewart (älter), James McAvoy (jünger)",["Star Trek: The Next Generation","Logan","Split"],
+ ["xmen00","x2","x3","!wolvorigins","firstclass","!wolverine13","dofp","apocalypse","logan","darkphoenix","!mom"],
+ [["x3","Seine Geschichte nimmt eine tragische Wendung."],["logan","Lebt alt und krank in der Nähe der Grenze."],["mom","Eine Variante gehört in einer anderen Welt zu den Illuminati."]]),
+C("magneto","Erik Lehnsherr","Magneto","xmen",["Kontrolle über Magnetfelder","Fliegen und Panzerung","Taktisches Genie"],
+ "Ein Mutant, der Magnetfelder kontrolliert und sich als Gegenpol zu Xavier versteht.",
+ "The X-Men #1 (1963) von Stan Lee und Jack Kirby. Im Comic wechselt er mehrfach vom Schurken zum Verbündeten.",
+ "Ian McKellen (älter), Michael Fassbender (jünger)",["The Lord of the Rings","Gods and Monsters","Shame"],
+ ["xmen00","x2","x3","firstclass","dofp","apocalypse","!wolverine13","darkphoenix"],
+ [["firstclass","Freundet sich mit Charles an, doch ihre Vorstellungen vom Umgang mit den Menschen trennen sie."]]),
+C("venom","Eddie Brock","Venom","venom",["Symbiont: Stärke und Heilung","Gestaltwandlung","Klebriges Netz"],
+ "Ein Reporter, der mit einer außerirdischen Lebensform verschmilzt.",
+ "The Amazing Spider-Man #300 (1988) von David Michelinie und Todd McFarlane. Im Comic ist Venom Spider-Mans Gegner, die Filme zeigen ihn als Antihelden.",
+ "Tom Hardy",["Mad Max: Fury Road","Inception","The Revenant"],
+ ["venom1","venom2","venom3","!nwh"],
+ [["nwh","Wird in eine andere Welt gezogen und kehrt in die eigene zurück."]]),
+C("tobey","Peter Parker","Spider-Man (Tobey Maguire)","spider",["Wandkriechen und Spinnensinn","Organische Netze","Starke Reflexe"],
+ "Ein schüchterner Schüler aus Queens, der nach einem Spinnenbiss Kräfte erhält.",
+ "Amazing Fantasy #15 (1962) von Stan Lee und Steve Ditko. Hier erzeugt der Held seine Netze selbst, im Comic nutzt er Netzwerfer.",
+ "Tobey Maguire",["The Cider House Rules","Seabiscuit","The Great Gatsby"],
+ ["sm1","sm2","sm3","!nwh"],
+ [["sm3","Kämpft mit einem dunklen Symbionten-Anzug."],["nwh","Trifft andere Spider-Men und stellt sich dem alten Gegner."]]),
+C("andrew","Peter Parker","Spider-Man (Andrew Garfield)","spider",["Wandkriechen und Spinnensinn","Mechanische Netzwerfer","Wissenschaftliches Talent"],
+ "Ein Schüler aus Queens, der nach dem Verschwinden seiner Eltern bei Onkel und Tante lebt.",
+ "Amazing Fantasy #15 (1962) von Stan Lee und Steve Ditko. Hier nutzt er Netzwerfer wie im Comic.",
+ "Andrew Garfield",["The Social Network","Hacksaw Ridge","Tick, Tick... Boom!"],
+ ["tasm1","tasm2","!nwh"],
+ [["tasm2","Erleidet einen schweren Verlust."],["nwh","Bekommt die Chance, ein altes Versäumnis wiedergutzumachen."]]),
+C("ff","Die Fantastischen Vier","Reed, Sue, Johnny, Ben","ff",["Reed: dehnbarer Körper, Genie","Sue: Unsichtbarkeit, Kraftfelder","Johnny: Feuer und Flug","Ben: Steinhaut, Kraft"],
+ "Vier Menschen erhalten nach einem Unfall im All übermenschliche Kräfte.",
+ "Fantastic Four #1 (1961) von Stan Lee und Jack Kirby. Der Start des Marvel-Zeitalters.",
+ "Fox: Ioan Gruffudd, Jessica Alba, Chris Evans, Michael Chiklis; MCU: Pedro Pascal, Vanessa Kirby, Joseph Quinn, Ebon Moss-Bachrach",["Pascal: The Mandalorian, The Last of Us","Kirby: The Crown","Quinn: Stranger Things"],
+ ["ff05","ff07","ff15","ff25","!dw","!thunderbolts"],
+ [["ff25","Kämpfen gemeinsam in einer eigenen Welt."]]),
+C("agatha","Agatha Harkness","Hexe","other",["Magie","Uralte Kräfte","Wissen über Zauber"],
+ "Eine mächtige Hexe, die in Westview als Nachbarin auftrat.",
+ "Fantastic Four #94 (1970) von Stan Lee und Jack Kirby. Im Comic ist sie die Hüterin der Kinder der Fantastic Four.",
+ "Kathryn Hahn",["Parks and Recreation","Transparent","Bad Moms"],
+ ["wandavision","agatha"],
+ [["wandavision","Zieht in Westview die Fäden im Hintergrund."],["agatha","Hat ihre Kräfte verloren und will sie zurück."]],
+ "wandavision")
+];
+
+/* Reihenfolge der Linien (Lanes) in der Karte: "Universum:Franchise". Der Avengers-Strang liegt in der Mitte der MCU-Linien. */
+const LANE_ORDER = ["MCU:iron","MCU:cap","MCU:thor","MCU:hulk","MCU:avengers","MCU:gotg","MCU:strange","MCU:spider","MCU:ant","MCU:panther","MCU:marvel","MCU:other","MCU:xmen","MCU:deadpool","MCU:defenders","MCU:ff",
+  "NET:defenders","ABC:shield","ABC:cap","FOX:xmen","FOX:deadpool","FF:ff","SONY:spider","SONY:venom","BLADE:blade"];
+const BUNDLE_NAME = {MCU:"MCU",NET:"Netflix",ABC:"ABC",FOX:"Fox X-Men",FF:"Fox FF",SONY:"Sony",BLADE:"Blade"};
+/* Andockstellen zwischen Welten. Sie erscheinen in der Karte erst, wenn alle Titel in req abgehakt sind (Spoiler-Regel). */
+const DOCKS = [
+  {from:"logan",to:"dw",req:["dw"]},{from:"deadpool2",to:"dw",req:["dw"]},{from:"ff07",to:"dw",req:["dw"]},{from:"blade3",to:"dw",req:["dw"]},
+  {from:"sm3",to:"nwh",req:["nwh"]},{from:"tasm2",to:"nwh",req:["nwh"]},{from:"venom1",to:"nwh",req:["nwh"]},
+  {from:"firstclass",to:"mom",req:["mom"]},{from:"ddn3",to:"nwh",req:["nwh"]},{from:"ddn1",to:"shehulk",req:["shehulk"]},
+  {from:"ddn3",to:"ddba1",req:[]}
+];
+/* Universen-Erklärung. parts: Spoiler-Abschnitte, sichtbar erst wenn alle req abgehakt sind. */
+const UNIINFO = [
+ {k:"MCU",fr:"avengers",name:"MCU: Marvel Studios",text:"Das Zentrum. Alle Filme und Disney+-Serien von Marvel Studios ab 2008 erzählen eine gemeinsame Geschichte, aufgeteilt in die Infinity-Saga (Phase 1 bis 3) und die Multiverse-Saga (ab Phase 4). Hier beginnt ihr am besten.",
+  parts:[{req:["loki1"],text:"Loki Staffel 1 führt das Multiversum ein: Es gibt viele Zeitlinien, und eine Behörde namens TVA überwacht sie. Damit lassen sich alle anderen Welten erklären."}]},
+ {k:"NET",fr:"defenders",name:"Netflix: Defenders",text:"Daredevil, Jessica Jones, Luke Cage, Iron Fist und The Punisher liefen von 2015 bis 2019 bei Netflix. Sie spielen in New York nach der Schlacht um New York und sind lose mit den Filmen verbunden. Je nach Land sind sie heute auf Disney+ abrufbar.",
+  parts:[{req:["ddba1"],text:"Daredevil: Born Again übernimmt Matt Murdock, Wilson Fisk und weitere Figuren aus den Netflix-Serien offiziell ins MCU. Schaut dafür mindestens die drei Daredevil-Staffeln."},{req:["nwh"],text:"Der Daredevil aus den Netflix-Serien taucht schon in No Way Home im MCU auf."}]},
+ {k:"ABC",fr:"shield",name:"ABC: S.H.I.E.L.D., Agent Carter, Inhumans",text:"Diese Serien liefen bei ABC. Agents of S.H.I.E.L.D. startete 2013 eng verzahnt mit den Filmen. Seit dem Disney+-Zeitalter ist offen, wie sie zum heutigen MCU stehen. Marvel Studios hat es nie ausdrücklich bestätigt.",parts:[]},
+ {k:"FOX",fr:"xmen",name:"Fox: X-Men, Wolverine, Deadpool",text:"Die Fox-Filme von 2000 bis 2020 entstanden bei einem anderen Studio und erzählen eigene, getrennte Geschichten. Disney kaufte Fox 2019, seitdem gehören die Rechte wieder Marvel. X-Men '97 ist eine animierte Serie in einer eigenen Welt.",
+  parts:[{req:["mom"],text:"Doctor Strange in the Multiverse of Madness zeigt eine Variante von Professor X aus einer anderen Welt."},{req:["dw"],text:"Deadpool & Wolverine verbindet beide Welten: Die Fox-Figuren stammen aus einer anderen Zeitlinie, die TVA spielt eine Rolle. Es gibt Rückkehrer und Auftritte aus mehreren Filmreihen."}]},
+ {k:"FF",fr:"ff",name:"Fantastic Four (Fox)",text:"Die drei Fox-Filme von 2005, 2007 und 2015 sind eine eigene Welt. Die Fantastic Four im MCU (2025) spielen in einer weiteren, anderen Welt und sind ein Neustart.",
+  parts:[{req:["dw"],text:"Eine Figur aus den Fox-Fantastic-Four-Filmen hat einen kurzen Auftritt in Deadpool & Wolverine."}]},
+ {k:"SONY",fr:"spider",name:"Sony: Spider-Man, Venom und Spider-Verse",text:"Sony besitzt die Filmrechte an Spider-Man. Seit Spider-Man: Homecoming (2017) entstehen die Filme mit Marvel Studios, deshalb gehört Tom Hollands Spider-Man zum MCU. Venom, Morbius, Madame Web und Kraven laufen als eigene Reihe ohne Spider-Man. Die Spider-Verse-Filme sind Animationsfilme in eigenen Welten.",
+  parts:[{req:["nwh"],text:"No Way Home verbindet den MCU-Spider-Man mit den Spider-Men aus den Raimi- und Amazing-Spider-Man-Filmen. Venom taucht kurz auf."}]},
+ {k:"BLADE",fr:"blade",name:"Blade",text:"Die drei Blade-Filme von 1998 bis 2004 stammen von New Line Cinema und stehen für sich. Ein MCU-Neustart wurde angekündigt, steht aber nicht mehr im Kinoplan.",
+  parts:[{req:["dw"],text:"Deadpool & Wolverine bringt Blade aus den alten Filmen kurz ins MCU zurück."}]}
+];
+
+/* ===== APP ===== */
+const byId = {};
+TITLES.forEach(t => { byId[t.id] = t; });
+const TICKABLE = TITLES.filter(t => !t.ann);
+const LS_KEY = "marvel-gesehen-v1";
+const MONTHS = ["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
+let seen = new Set();
+const S = {order:"release", uni:"", fr:"", type:"", imp:"", only:false, sel:"", pend:"", cq:"", cfr:""};
+let flashId = "";
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function loadLocal(){ try{ const r = localStorage.getItem(LS_KEY); if(r){ const a = JSON.parse(r); if(Array.isArray(a)) seen = new Set(a.filter(id => byId[id])); } }catch(e){} }
+function saveLocal(){ try{ localStorage.setItem(LS_KEY, JSON.stringify([...seen].sort())); }catch(e){} }
+
+/* abgeleitete Beziehungen */
+const REV = {};
+TITLES.forEach(t => { REV[t.id] = new Set(); });
+TITLES.forEach(t => t.before.forEach(b => REV[b] && REV[b].add(t.id)));
+function nextOf(t){ const s = new Set(t.leadsTo); REV[t.id].forEach(x => s.add(x)); return [...s]; }
+/* transitive Reduktion der Vorbedingungen, damit die Karte lesbar bleibt */
+const ANC = {};
+function ancestors(id){ if(ANC[id]) return ANC[id]; const s = new Set(); ANC[id] = s; byId[id].before.forEach(b => { s.add(b); ancestors(b).forEach(x => s.add(x)); }); return s; }
+TITLES.forEach(t => ancestors(t.id));
+const EDGES = [];
+(function(){
+  const have = new Set();
+  TITLES.forEach(t => {
+    t.before.forEach(b => {
+      if(t.before.some(p => p !== b && ANC[p].has(b))) return;
+      have.add(b+">"+t.id); EDGES.push({from:b,to:t.id,kind:"before"});
+    });
+  });
+  TITLES.forEach(t => t.leadsTo.forEach(x => {
+    if(!byId[x] || have.has(t.id+">"+x)) return;
+    have.add(t.id+">"+x); EDGES.push({from:t.id,to:x,kind:"leads"});
+  }));
+  DOCKS.forEach(d => { const k = d.from+">"+d.to; if(!have.has(k)){ have.add(k); EDGES.push({from:d.from,to:d.to,kind:"dock",req:d.req}); } });
+})();
+function laneOf(t){ return t.uni+":"+t.fr; }
+
+/* Format */
+function dkey(t){ const d = t.date; return d.length===4 ? d+"-06-15" : d.length===7 ? d+"-15" : d; }
+function fmtDate(t){ const p = t.date.split("-"); if(p.length===3) return p[2]+"."+p[1]+"."+p[0]; if(p.length===2) return MONTHS[+p[1]-1]+" "+p[0]; return p[0]; }
+function ordered(){
+  const a = TITLES.slice();
+  const rel = (x,y) => dkey(x) < dkey(y) ? -1 : dkey(x) > dkey(y) ? 1 : x.ord - y.ord;
+  if(S.order === "release") return a.sort(rel);
+  return a.sort((x,y) => (x.alt-y.alt) || (x.alt ? rel(x,y) : (x.ord-y.ord) || rel(x,y)));
+}
+function passes(t, withOnly){
+  if(S.uni && t.uni !== S.uni) return false;
+  if(S.type && t.type !== S.type) return false;
+  if(S.imp && t.imp !== S.imp) return false;
+  if(withOnly && S.only && seen.has(t.id)) return false;
+  return true;
+}
+function visibleList(withOnly){ return ordered().filter(t => passes(t, withOnly)); }
+const ERAS = [["e1","Bis 1999"],["e2","2000 bis 2009"],["e3","2010 bis 2013"],["e4","2014 bis 2017"],["e5","2018 bis 2023"],["e6","2024 bis 2028"],["e7","Ferne Zukunft"],["alt","Parallele Realitäten"]];
+function eraOf(t){ if(t.alt) return "alt"; const o = t.ord; return o<2000?"e1":o<2010?"e2":o<2014?"e3":o<2018?"e4":o<2024?"e5":o<2029?"e6":"e7"; }
+function groupsOf(list){
+  const out = [], idx = {};
+  list.forEach(t => {
+    let key, label, saga = "";
+    if(S.order === "chrono"){ key = eraOf(t); label = ERAS.find(e => e[0]===key)[1]; }
+    else if(S.uni === "MCU"){ key = t.phase; label = PHASES[key]; saga = SAGA[key]; }
+    else { key = t.date.slice(0,4); label = key; }
+    if(!(key in idx)){ idx[key] = out.length; out.push({key,label,saga,items:[]}); }
+    out[idx[key]].items.push(t);
+  });
+  return out;
+}
+
+/* ---------- Fortschritt ---------- */
+function counts(){
+  const n = TICKABLE.filter(t => seen.has(t.id)).length;
+  const per = UNIS.map(u => { const l = TICKABLE.filter(t => t.uni===u.k); return {n:u.n, a:l.filter(t => seen.has(t.id)).length, b:l.length}; });
+  ["Infinity-Saga","Multiverse-Saga"].forEach(sg => { const l = TICKABLE.filter(t => t.uni==="MCU" && SAGA[t.phase]===sg); per.push({n:sg, a:l.filter(t => seen.has(t.id)).length, b:l.length}); });
+  return {n, total:TICKABLE.length, per};
+}
+function renderSummary(){
+  const c = counts(), pct = c.total ? Math.round(c.n/c.total*100) : 0;
+  $("#bigN").innerHTML = c.n + '<small>von ' + c.total + ' gesehen</small>';
+  $("#barFill").style.width = pct + "%";
+  $("#bar").setAttribute("aria-valuenow", pct);
+  $("#split").innerHTML = c.per.map(p => '<li><span>'+esc(p.n)+'</span><b class="num">'+p.a+' / '+p.b+'</b></li>').join("");
+  $("#miniProg").textContent = c.n + " von " + c.total + " gesehen";
+  const cands = visibleList(false).filter(t => !t.ann && !seen.has(t.id) && t.before.every(b => seen.has(b)));
+  const pick = cands.filter(t => t.imp !== "O").slice(0,3);
+  if(pick.length < 3) cands.filter(t => t.imp === "O").slice(0, 3-pick.length).forEach(t => pick.push(t));
+  $("#nextHint").textContent = "Nächste freigeschaltete Titel in der Reihenfolge „" + (S.order==="release"?"Erscheinung":"Chronologisch") + "“" + (S.uni||S.type||S.imp ? ", mit euren Filtern." : ".");
+  $("#nx").innerHTML = pick.length ? pick.map(t => '<li class="f-'+t.fr+'"><span class="t">'+esc(t.de)+'</span><span class="hint">'+esc(UNI_SHORT[t.uni])+' · '+fmtDate(t)+' · '+IMP[t.imp]+(t.before.length?' · Vorher gesehen: '+t.before.length+' von '+t.before.length:'')+'</span><span class="acts"><button class="btn small solid" type="button" data-act="mark" data-id="'+t.id+'" data-fid="nm-'+t.id+'">Als gesehen markieren</button><button class="btn small" type="button" data-act="goto" data-id="'+t.id+'" data-fid="ng-'+t.id+'">Im Zeitstrahl zeigen</button></span></li>').join("")
+    : '<li class="empty">Im aktuellen Filter ist nichts freigeschaltet. Entweder habt ihr alles gesehen, oder es fehlen Vorgänger. Lockert die Filter.</li>';
+}
+
+/* ---------- Steuerung ---------- */
+const chipBtn = (cls, pressed, act, val, label, fid, fr) => '<button type="button" class="chip'+(fr?' f-'+fr:'')+'" aria-pressed="'+pressed+'" data-act="'+act+'" data-val="'+val+'" data-fid="'+fid+'">'+esc(label)+'</button>';
+function renderCtl(){
+  const fused = FRANCHISES.filter(f => TITLES.some(t => t.fr===f.k));
+  $("#ctl").innerHTML =
+   '<div class="r"><span class="lbl">Reihenfolge</span><div class="seg" role="group" aria-label="Reihenfolge">'+
+     '<button type="button" aria-pressed="'+(S.order==="release")+'" data-act="order" data-val="release" data-fid="o1">Erscheinungsreihenfolge</button>'+
+     '<button type="button" aria-pressed="'+(S.order==="chrono")+'" data-act="order" data-val="chrono" data-fid="o2">Chronologisch (Handlung)</button></div></div>'+
+   '<div class="r"><span class="lbl">Universum</span><div class="chips">'+chipBtn("",!S.uni,"uni","","Alle","u-all")+UNIS.map(u => chipBtn("",S.uni===u.k,"uni",u.k,u.n,"u-"+u.k)).join("")+'</div></div>'+
+   '<div class="r"><span class="lbl">Franchise</span><div class="chips">'+chipBtn("",!S.fr,"fr","","Keine Hervorhebung","f-none")+fused.map(f => chipBtn("",S.fr===f.k,"fr",f.k,f.n,"f-"+f.k,f.k)).join("")+'</div></div>'+
+   '<div class="r"><span class="lbl">Auswahl</span>'+
+     '<label>Typ <select data-act="type" data-fid="s-type"><option value="">Alle</option>'+["Film","Serie","Special","Animation"].map(x => '<option'+(S.type===x?' selected':'')+'>'+x+'</option>').join("")+'</select></label>'+
+     '<label>Wichtigkeit <select data-act="imp" data-fid="s-imp"><option value="">Alle</option>'+Object.keys(IMP).map(k => '<option value="'+k+'"'+(S.imp===k?' selected':'')+'>'+IMP[k]+'</option>').join("")+'</select></label>'+
+     '<label class="cb"><input type="checkbox" data-act="only" data-fid="s-only"'+(S.only?' checked':'')+'> nur ungesehene</label></div>';
+}
+
+/* ---------- Zeitstrahl ---------- */
+function relSets(){
+  const b = new Set(), l = new Set();
+  if(S.sel && byId[S.sel]){ const t = byId[S.sel]; t.before.forEach(x => b.add(x)); nextOf(t).forEach(x => l.add(x)); }
+  return {b,l};
+}
+function charsIn(tid){
+  return CHARS.filter(c => (!c.gate || seen.has(c.gate)) && c.auftritte.some(a => { const sur = a[0]==="!"; return a.replace("!","")===tid && (!sur || seen.has(tid)); }));
+}
+const FRN = {}; FRANCHISES.forEach(f => { FRN[f.k] = f.n; });
+const LANE_NAME = {"MCU:defenders":"Daredevil","ABC:cap":"Agent Carter","NET:defenders":"Defenders","ABC:shield":"S.H.I.E.L.D.","SONY:venom":"Venom & Co.","MCU:marvel":"Captain Marvel","MCU:other":"Weitere","FOX:xmen":"X-Men (Fox)","FF:ff":"Fantastic Four (Fox)","SONY:spider":"Spider-Man (Sony)","MCU:xmen":"X-Men","MCU:ff":"Fantastic Four"};
+function laneName(l){ return LANE_NAME[l] || FRN[l.split(":")[1]] || l; }
+function pillsOf(t){
+  let h = '<span class="lineb">'+esc(laneName(laneOf(t)))+'</span><span class="pill">'+t.type+'</span>';
+  h += '<span class="pill inv">'+esc(t.phase ? PHASES[t.phase] : UNI_SHORT[t.uni])+'</span>';
+  h += '<span class="pill'+(t.imp==="P"?" must":t.imp==="O"?" dash":"")+'">'+IMP[t.imp]+'</span>';
+  return h;
+}
+function linkBtns(ids, cls){
+  return ids.length ? '<ul class="links">'+ids.map(id => { const x = byId[id]; const ok = seen.has(id); return '<li><button type="button" class="lnk f-'+x.fr+(ok?' done':(x.ann?'':' open'))+'" data-act="goto" data-id="'+id+'">'+esc(x.de)+(x.ann?' (angekündigt)':'')+'</button></li>'; }).join("")+'</ul>' : '<span class="hint">Keine</span>';
+}
+function detailsHTML(t){
+  const nx = nextOf(t).filter(x => byId[x]);
+  const open = t.before.filter(b => !seen.has(b));
+  const ch = charsIn(t.id);
+  let h = '<div class="det"><p>'+esc(t.premise)+'</p>'+(t.note?'<p class="hint">'+esc(t.note)+'</p>':'');
+  h += '<div><h4>Vorher schauen'+(open.length?' ('+open.length+' offen)':'')+'</h4>'+(t.before.length?linkBtns(t.before):'<span class="hint">Keine Voraussetzungen</span>')+'</div>';
+  if(t.soft.length) h += '<div><h4>Gut zu kennen</h4>'+linkBtns(t.soft)+'</div>';
+  h += '<div><h4>Führt zu</h4>'+(nx.length?linkBtns(nx):'<span class="hint">Nichts Direktes</span>')+'</div>';
+  h += '<div><h4>Figuren</h4>'+(ch.length?'<ul class="links">'+ch.map(c => '<li><button type="button" class="lnk f-'+c.fr+'" data-act="char" data-id="'+c.id+'">'+esc(c.name)+'</button></li>').join("")+'</ul>':'<span class="hint">Keine Steckbriefe</span>')+
+     (CHARS.some(c => c.auftritte.includes("!"+t.id)) && !seen.has(t.id) ? '<p class="hint"><span class="lock">Gesperrt</span>Weitere Auftritte sind Überraschungen und erscheinen nach dem Abhaken.</p>':'')+'</div>';
+  if(!t.ann){
+    const lst = visibleList(false); const i = lst.findIndex(x => x.id===t.id);
+    const todo = lst.slice(0,i+1).filter(x => !x.ann && !seen.has(x.id));
+    if(S.pend === t.id) h += '<div class="conf" role="group" aria-label="Bestätigung"><span>'+todo.length+' Titel bis hier im aktuellen Filter als gesehen markieren?</span><button class="btn small solid" type="button" data-act="until-yes" data-id="'+t.id+'" data-fid="uy-'+t.id+'">Ja, markieren</button><button class="btn small" type="button" data-act="until-no" data-fid="un-'+t.id+'">Abbrechen</button></div>';
+    else h += '<div><button class="btn small" type="button" data-act="until" data-id="'+t.id+'" data-fid="ub-'+t.id+'">Alles bis hier als gesehen markieren</button></div>';
+  }
+  return h + '</div>';
+}
+function itemHTML(t){
+  const rs = relSets(), sel = S.sel === t.id;
+  let cls = "it f-"+t.fr;
+  if(seen.has(t.id)) cls += " seen";
+  if(S.fr) cls += t.fr===S.fr ? " hl" : " dim";
+  if(S.sel){ if(sel) cls += " sel"; else if(rs.b.has(t.id)) cls += " rb"; else if(rs.l.has(t.id)) cls += " rl"; else cls += " nr"; }
+  if(flashId === t.id) cls += " flash";
+  const dt = '<div class="dt"><b>'+fmtDate(t)+'</b>'+(S.order==="chrono"?esc(t.iu):(t.ann?'angekündigt':''))+'</div>';
+  const box = t.ann ? '<span class="annmark">bald</span>' : '<label class="chk"><input type="checkbox" data-seen="'+t.id+'" data-fid="cb-'+t.id+'"'+(seen.has(t.id)?' checked':'')+' aria-label="'+esc(t.de)+' gesehen"><span class="box"></span></label>';
+  const meta = [S.order==="release"?'Handlung: '+t.iu:'', t.rt].filter(Boolean).join(" · ");
+  return '<li class="'+cls+'" id="t-'+t.id+'" data-id="'+t.id+'"><div class="card"><div class="top-line">'+box+'<div class="ttlwrap">'+dt+'<button type="button" class="ttl" aria-expanded="'+sel+'" data-act="toggle" data-id="'+t.id+'" data-fid="tt-'+t.id+'">'+esc(t.de)+(t.orig!==t.de?'<span class="orig">'+esc(t.orig)+'</span>':'')+'</button><div class="pills">'+pillsOf(t)+'</div>'+(meta?'<div class="meta">'+esc(meta)+'</div>':'')+'</div></div>'+(sel?detailsHTML(t):'')+'</div></li>';
+}
+/* Knotenpunkte: Titel, in die mindestens zwei fremde Linien einlaufen */
+const HUB = new Set();
+TITLES.forEach(t => { const s = new Set(); t.before.forEach(b => { if(byId[b] && laneOf(byId[b]) !== laneOf(t)) s.add(laneOf(byId[b])); }); if(s.size >= 2) HUB.add(t.id); });
+/* Geometrie der Linien */
+let GEO = null;
+function geometry(list){
+  const lanes = LANE_ORDER.filter(l => list.some(t => laneOf(t)===l));
+  list.forEach(t => { if(!lanes.includes(laneOf(t))) lanes.push(laneOf(t)); });
+  const W = $("#list").clientWidth || 360, narrow = W < 760;
+  const bundleGap = narrow ? 3 : 16, pad = narrow ? 6 : 14;
+  let nb = 0, prev = ""; lanes.forEach(l => { const b = l.split(":")[0]; if(b!==prev){ nb++; prev = b; } });
+  const maxW = narrow ? W*0.27 : Math.min(470, W*0.38);
+  const lw = Math.max(narrow ? 2.2 : 9, Math.min(narrow ? 9 : 22, (maxW - pad*2 - (nb-1)*bundleGap) / Math.max(1,lanes.length)));
+  const x = {}, bundles = []; let cx = pad + lw/2; prev = "";
+  lanes.forEach(l => {
+    const b = l.split(":")[0];
+    if(b !== prev){ if(prev) cx += bundleGap; bundles.push({b, x0:cx-lw/2-3, x1:cx+lw/2+3}); prev = b; }
+    x[l] = cx; bundles[bundles.length-1].x1 = cx + lw/2 + 3; cx += lw;
+  });
+  return {lanes, x, bundles, gw: Math.ceil(cx - lw/2 + pad), lw, narrow,
+    ss: narrow ? Math.max(7, Math.min(12, lw+3)) : Math.max(12, Math.min(18, lw-1)),
+    sw: narrow ? Math.max(2, Math.min(4, lw-1)) : Math.max(3.5, Math.min(6, lw*0.36)),
+    gap: narrow ? 10 : 28};
+}
+function layoutGraph(){
+  const tl = $("#tl"); if(!tl || !GEO) return;
+  const svg = $("#gsvg"), stg = $("#gst"), head = $("#ghead"), g = GEO;
+  const tr = tl.getBoundingClientRect(), H = tl.scrollHeight;
+  const topY = g.narrow ? 24 : 124, endX = g.gw + g.gap;
+  $("#gwrap").style.width = g.gw + "px";
+  svg.setAttribute("width", endX); svg.setAttribute("height", H); svg.style.height = H+"px"; svg.style.width = endX+"px";
+  svg.style.setProperty("--lw", g.sw+"px");
+  const pos = {};
+  tl.querySelectorAll(".it").forEach(el => {
+    const r = el.querySelector(".card").getBoundingClientRect();
+    pos[el.dataset.id] = {y: r.top - tr.top + 27, h: r.height};
+  });
+  const rs = relSets(), has = !!S.sel;
+  let sv = "", st = "";
+  g.bundles.forEach(b => { if(b.b !== "MCU") sv += '<rect class="bun" x="'+b.x0+'" y="'+topY+'" width="'+(b.x1-b.x0)+'" height="'+(H-topY)+'" rx="8"></rect>'; });
+  tl.querySelectorAll(".saga,.bh").forEach(el => { const r = el.getBoundingClientRect(); const y = r.top - tr.top + r.height/2; sv += '<path class="'+(el.classList.contains("saga")?"sagaln":"bandln")+'" d="M0 '+y+' H'+g.gw+'"></path>'; });
+  const byLane = {};
+  const vis = []; tl.querySelectorAll(".it").forEach(el => vis.push(byId[el.dataset.id]));
+  vis.forEach(t => (byLane[laneOf(t)] = byLane[laneOf(t)] || []).push(t));
+  const isHi = (a,b) => has && (a===S.sel || b===S.sel);
+  /* Führungslinien von der Station zur Karte */
+  vis.forEach(t => {
+    const p = pos[t.id], x = g.x[laneOf(t)];
+    const c = has ? (S.sel===t.id ? " on" : (rs.b.has(t.id) || rs.l.has(t.id)) ? "" : " lo") : (S.fr && t.fr!==S.fr ? " lo" : "");
+    sv += '<path class="ld'+c+'" style="stroke:var(--c-'+t.fr+')" d="M'+x+' '+p.y+' H'+endX+'"></path>';
+  });
+  /* Linien je Reihe */
+  Object.keys(byLane).forEach(l => {
+    const a = byLane[l];
+    for(let i=0;i<a.length-1;i++){
+      const p = a[i], q = a[i+1], both = seen.has(p.id) && seen.has(q.id);
+      const c = (has ? (isHi(p.id,q.id) ? " hi" : " lo") : (S.fr && p.fr!==S.fr ? " lo" : "")) + (both ? "" : " faint");
+      sv += '<path class="ln'+c+'" style="stroke:var(--c-'+p.fr+')" d="M'+g.x[l]+' '+pos[p.id].y+' V'+pos[q.id].y+'"></path>';
+    }
+  });
+  /* Querverbindungen: die Linie läuft in ihrer Spur bis kurz vor das Ziel und biegt dann ein */
+  EDGES.forEach(e => {
+    const a = byId[e.from], b = byId[e.to]; if(!a || !b || !pos[e.from] || !pos[e.to]) return;
+    if(laneOf(a) === laneOf(b)) return;
+    if(e.kind === "dock" && !(e.req||[]).every(r => seen.has(r))) return;
+    if(e.kind === "leads" && !seen.has(e.from) && !seen.has(e.to)) return;
+    const xb = g.x[laneOf(a)], xt = g.x[laneOf(b)], yb = pos[e.from].y, yt = pos[e.to].y;
+    const bend = Math.max(34, Math.min(90, Math.abs(xt-xb)*0.9 + 24));
+    let d;
+    if(yt > yb + 16){
+      const ym = Math.max(yb, yt - bend), k = (yt-ym)*0.55;
+      d = 'M'+xb+' '+yb+' V'+ym+' C'+xb+' '+(ym+k)+' '+xt+' '+(yt-k)+' '+xt+' '+yt;
+    } else if(yb > yt + 16){
+      const ym = Math.max(yt, yb - bend), k = (yb-ym)*0.55;
+      d = 'M'+xt+' '+yt+' V'+ym+' C'+xt+' '+(ym+k)+' '+xb+' '+(yb-k)+' '+xb+' '+yb;
+    } else { d = 'M'+xb+' '+yb+' L'+xt+' '+yt; }
+    const both = seen.has(e.from) && seen.has(e.to);
+    const c = (has ? (isHi(e.from,e.to) ? " hi" : " lo") : (S.fr && a.fr!==S.fr && b.fr!==S.fr ? " lo" : "")) + (both ? "" : " faint") + (e.kind==="dock"?" dock":"");
+    sv += '<path class="lk'+c+'" style="stroke:var(--c-'+a.fr+')" d="'+d+'"></path>';
+  });
+  svg.innerHTML = sv;
+  /* Stationen */
+  vis.forEach(t => {
+    const p = pos[t.id], x = g.x[laneOf(t)];
+    const series = (t.type === "Serie" || (t.type === "Animation" && /Folgen/.test(t.rt))) && !t.ann;
+    const hub = HUB.has(t.id) && !series;
+    let cls = "st f-"+t.fr+(seen.has(t.id)?" seen":"")+(t.ann?" ann":"")+(t.alt?" alt":"")+(series?" span":"")+(hub?" hub":"");
+    if(has){ if(S.sel===t.id) cls += " sel"; else if(!rs.b.has(t.id) && !rs.l.has(t.id)) cls += " nr"; }
+    else if(S.fr && t.fr!==S.fr) cls += " nr";
+    if(flashId===t.id) cls += " flash";
+    const sh = series ? Math.max(g.ss+8, Math.min(46, p.h - 30)) : g.ss;
+    const top = series ? p.y - g.ss/2 : p.y;
+    st += '<span class="'+cls+'" data-id="'+t.id+'" style="left:'+x+'px;top:'+top+'px;--ss:'+g.ss+'px;--sb:'+(g.narrow?2.5:3.5)+'px;'+(series?'width:'+g.ss+'px;height:'+sh+'px':'')+'" title="'+esc(t.de)+'"></span>';
+  });
+  stg.innerHTML = st;
+  /* Beschriftung: breit je Linie schräg, schmal je Bündel abgekürzt */
+  if(g.narrow){
+    const ABBR = {MCU:"MCU",NET:"NET",ABC:"ABC",FOX:"FOX",FF:"FF",SONY:"SON",BLADE:"BLD"};
+    head.innerHTML = g.bundles.filter(b => (b.x1-b.x0) >= 20).map(b => '<span class="lanehead" title="'+esc(BUNDLE_NAME[b.b]||b.b)+'" style="left:'+b.x0+'px">'+esc(ABBR[b.b]||b.b)+'</span>').join("");
+  } else {
+    head.innerHTML = g.lanes.map(l => { const fr = l.split(":")[1]; return '<span class="lanelab f-'+fr+(S.fr && S.fr!==fr?' dimmed':'')+'" style="left:'+g.x[l]+'px">'+esc(laneName(l))+'</span>'; }).join("");
+  }
+}
+function renderList(){
+  const list = visibleList(true);
+  const groups = groupsOf(list);
+  GEO = list.length ? geometry(list) : null;
+  let h = '<div class="relnote"><span><i class="o"></i>Station: noch offen</span><span><i class="o s"></i>gesehen</span><span><i class="o h"></i>Knotenpunkt, hier laufen Linien zusammen</span><span><i></i>Linie einer Reihe, blass bis ihr sie gesehen habt</span><span><i class="d"></i>Übergang aus einer anderen Welt, erscheint nach dem Abhaken</span></div>';
+  if(S.sel && byId[S.sel]) h += '<div class="relnote selbar"><span>Ausgewählt: <b>'+esc(byId[S.sel].de)+'</b>. Seine Verbindungen sind hervorgehoben.</span><button type="button" class="btn small" data-act="clear" data-fid="clr">Auswahl aufheben</button></div>';
+  if(S.order === "chrono") h += '<p class="era-note">Bei vielen neueren Titeln nennt Marvel kein genaues Jahr, die Einordnung ist grob.</p>';
+  h += '<div class="tl '+(GEO && GEO.narrow ? 'narrow' : 'wide')+'" id="tl"><div class="gwrap" id="gwrap"><svg class="gsvg" id="gsvg" aria-hidden="true"></svg><div id="gst"></div><div id="ghead"></div></div><div class="tlbody" id="tlbody">';
+  if(!list.length) h += '<p class="empty">Keine Titel für diese Filter.</p>';
+  let lastSaga = "";
+  groups.forEach(g => {
+    if(g.saga && g.saga !== lastSaga){ lastSaga = g.saga; h += '<div class="saga"><h3>'+esc(g.saga)+'</h3><small>'+(g.saga==="Infinity-Saga"?"Phase 1 bis 3, 2008 bis 2019":"Phase 4 bis 6, ab 2021")+'</small></div>'; }
+    const tk = g.items.filter(t => !t.ann), n = tk.filter(t => seen.has(t.id)).length;
+    h += '<section class="band"><div class="bh"><h3>'+esc(g.label)+'</h3><small class="num">'+n+' von '+tk.length+' gesehen</small></div><ol class="its">'+g.items.map(itemHTML).join("")+'</ol></section>';
+  });
+  h += '</div></div>';
+  const host = $("#list"); host.innerHTML = h;
+  if(GEO) $("#tlbody").style.marginLeft = (GEO.gw + GEO.gap) + "px";
+  layoutGraph();
+}
+
+/* ---------- Figuren ---------- */
+function appsOf(c){ return c.auftritte.map(a => ({id:a.replace("!",""), sur:a[0]==="!"})); }
+function renderCChips(){
+  const used = FRANCHISES.filter(f => CHARS.some(c => c.fr===f.k));
+  $("#cchips").innerHTML = chipBtn("",!S.cfr,"cfr","","Alle","cf-all") + used.map(f => chipBtn("",S.cfr===f.k,"cfr",f.k,f.n,"cf-"+f.k,f.k)).join("");
+}
+function renderChars(){
+  const q = S.cq.trim().toLowerCase();
+  const list = CHARS.filter(c => (!S.cfr || c.fr===S.cfr) && (!q || [c.name,c.alias,c.darsteller.name].some(x => x.toLowerCase().includes(q)) || (c.gate && !seen.has(c.gate) ? false : false)));
+  $("#cgrid").innerHTML = list.map(c => {
+    if(c.gate && !seen.has(c.gate)){
+      if(q) return "";
+      return '<li><button type="button" class="cc gated f-'+c.fr+'" data-act="char" data-id="'+c.id+'" data-fid="c-'+c.id+'"><span class="n">Gesperrt</span><span class="a">Steckbrief erscheint nach „'+esc(byId[c.gate].de)+'“.</span></button></li>';
+    }
+    const vis = appsOf(c).filter(a => !a.sur || seen.has(a.id)), sn = vis.filter(a => seen.has(a.id)).length;
+    return '<li><button type="button" class="cc f-'+c.fr+'" data-act="char" data-id="'+c.id+'" data-fid="c-'+c.id+'"><span class="n">'+esc(c.name)+'</span><span class="a">'+esc(c.alias)+'</span><span class="a">'+esc(c.darsteller.name)+'</span><span class="s num">'+sn+' von '+vis.length+' Auftritten gesehen</span></button></li>';
+  }).join("") || '<li class="empty">Keine Figur gefunden.</li>';
+}
+function titleChip(id, cls){ const x = byId[id]; return '<li><button type="button" class="lnk f-'+x.fr+(seen.has(id)?' done':'')+'" data-act="gotoclose" data-id="'+id+'">'+esc(x.de)+'</button></li>'; }
+let opener = null;
+function openChar(id){
+  const c = CHARS.find(x => x.id===id); if(!c) return;
+  opener = document.activeElement;
+  const panel = $("#panel");
+  let h;
+  if(c.gate && !seen.has(c.gate)){
+    h = '<div class="ph"><h3 id="pTitle">Gesperrt</h3><button class="btn small" type="button" data-act="close" id="pClose">Schließen</button></div><div class="pb"><p><span class="lock">Gesperrt</span>Dieser Steckbrief ist ein Spoiler und erscheint, sobald ihr „'+esc(byId[c.gate].de)+'“ abgehakt habt.</p></div>';
+    panel.style.setProperty("--fc","var(--c-"+c.fr+")");
+  } else {
+    const apps = appsOf(c).filter(a => !a.sur || seen.has(a.id)), hidden = c.auftritte.length - apps.length;
+    const surIds = new Set(appsOf(c).filter(a => a.sur).map(a => a.id));
+    const ent = c.entwicklung.slice().sort((a,b) => dkey(byId[a.titleId]) < dkey(byId[b.titleId]) ? -1 : 1);
+    h = '<div class="ph"><div><h3 id="pTitle">'+esc(c.name)+'</h3><div class="hint">'+esc(c.alias)+'</div></div><button class="btn small" type="button" data-act="close" id="pClose">Schließen</button></div><div class="pb">'+
+     '<div><h4>Fähigkeiten</h4><ul>'+c.faehigkeiten.map(x => '<li>'+esc(x)+'</li>').join("")+'</ul></div>'+
+     '<div><h4>Hintergrund</h4><p>'+esc(c.hintergrund)+'</p></div>'+
+     '<div><h4>Im Comic</h4><p>'+esc(c.comic)+'</p></div>'+
+     '<div><h4>Darsteller</h4><p><b>'+esc(c.darsteller.name)+'</b><br>Bekannt aus: '+c.darsteller.auch.map(esc).join(", ")+'</p></div>'+
+     '<div><h4>Auftritte</h4><ul class="links">'+apps.map(a => titleChip(a.id)).join("")+'</ul>'+(hidden?'<p class="hint"><span class="lock">Gesperrt</span>'+(hidden===1?'Ein weiterer Auftritt ist eine Überraschung und wird':hidden+' weitere Auftritte sind Überraschungen und werden')+' nach dem Abhaken des jeweiligen Titels sichtbar.</p>':'')+'</div>'+
+     '<div><h4>Entwicklung</h4><ul class="ent">'+ent.map(e => {
+        const ok = seen.has(e.titleId);
+        if(ok) return '<li><b>'+esc(byId[e.titleId].de)+'.</b> '+esc(e.text)+'</li>';
+        return '<li class="locked"><span class="lock">Gesperrt</span>'+(surIds.has(e.titleId) ? 'Wird durch einen weiteren Titel freigeschaltet.' : 'Nach „'+esc(byId[e.titleId].de)+'“ sichtbar.')+'</li>';
+      }).join("")+'</ul></div></div>';
+    panel.style.setProperty("--fc","var(--c-"+c.fr+")");
+  }
+  $("#panelBody").innerHTML = h;
+  try{ if(!panel.open) panel.showModal(); }catch(e){ panel.setAttribute("open",""); }
+  panel.scrollTop = 0;
+  const cl = $("#pClose"); if(cl) cl.focus();
+}
+function closePanel(){ const p = $("#panel"); try{ p.close(); }catch(e){ p.removeAttribute("open"); } if(opener && document.body.contains(opener)) try{ opener.focus(); }catch(e){} }
+
+/* ---------- Universen ---------- */
+function renderUnis(){
+  $("#unis").innerHTML = UNIINFO.map(u => '<article class="uni f-'+u.fr+'"><h3>'+esc(u.name)+'</h3><p>'+esc(u.text)+'</p>'+u.parts.map(p => p.req.every(r => seen.has(r)) ? '<p class="sp">'+esc(p.text)+'</p>' : '<p class="sp locked"><span class="lock">Gesperrt</span>Spoiler. Sichtbar nach „'+esc(byId[p.req.find(r => !seen.has(r))].de)+'“.</p>').join("")+'</article>').join("");
+}
+
+/* ---------- Speichern und Sync ---------- */
+let dbDoc = null, writing = false, dirty = false, lastRemote = "", timer = null;
+function setSyncNote(t){ const el = $("#syncNote"); if(el) el.textContent = t; }
+function scheduleRemote(){ if(!dbDoc) return; dirty = true; clearTimeout(timer); timer = setTimeout(flushRemote, 800); }
+async function flushRemote(){
+  timer = null;
+  if(!dbDoc) return;
+  if(writing){ dirty = true; return; }
+  writing = true; dirty = false;
+  const ids = [...seen].sort();
+  try{ await dbDoc.set({seen: ids}); lastRemote = JSON.stringify(ids); setSyncNote("Synchronisiert"); }
+  catch(e){ setSyncNote("Nur auf diesem Gerät gespeichert"); }
+  writing = false;
+  if(dirty) scheduleRemote();
+}
+function applyRemote(ids){ seen = new Set(ids.filter(id => byId[id])); saveLocal(); renderAll(); }
+(async () => {
+  try{
+    if(!window.claude || !window.claude.use) return;
+    const db = await window.claude.use("db");
+    if(!db) return;
+    dbDoc = db.doc("progress/shared");
+    dbDoc.onSnapshot(snap => {
+      const ids = snap.exists ? (snap.data().seen || []) : null;
+      if(!ids || snap.metadata.hasPendingWrites) return;
+      if(writing || dirty || timer) return;
+      const key = JSON.stringify([...ids].sort());
+      if(key === lastRemote) return;
+      lastRemote = key;
+      applyRemote(ids);
+      setSyncNote("Synchronisiert");
+    }, () => { dbDoc = null; setSyncNote("Nur auf diesem Gerät gespeichert"); });
+  }catch(e){}
+})();
+
+/* ---------- Rendern und Ereignisse ---------- */
+function renderAll(){
+  const a = document.activeElement, fid = a && a.dataset ? a.dataset.fid : null, was = a && a.id === "cq";
+  renderSummary(); renderCtl(); renderList(); renderChars(); renderUnis(); renderCChips();
+  if(fid){ const n = document.querySelector('[data-fid="'+fid+'"]'); if(n) try{ n.focus({preventScroll:true}); }catch(e){} }
+}
+function changed(){ saveLocal(); scheduleRemote(); renderAll(); }
+function reduced(){ return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches; }
+function gotoTitle(id, select){
+  const t = byId[id]; if(!t) return;
+  if(!visibleList(true).some(x => x.id===id)){ S.uni = ""; S.type = ""; S.imp = ""; S.only = false; }
+  S.sel = select === false ? S.sel : id; S.pend = ""; flashId = id;
+  renderAll();
+  const el = document.getElementById("t-"+id);
+  if(el) el.scrollIntoView({block:"center", behavior: reduced() ? "auto" : "smooth"});
+  setTimeout(() => { flashId = ""; document.querySelectorAll(".flash").forEach(x => x.classList.remove("flash")); }, 1900);
+}
+function toggleSeen(id){ if(seen.has(id)) seen.delete(id); else seen.add(id); changed(); }
+document.addEventListener("click", ev => {
+  const st = ev.target.closest && ev.target.closest(".st");
+  if(st && st.dataset.id){ S.sel = S.sel === st.dataset.id ? "" : st.dataset.id; S.pend = ""; renderAll(); const el = document.getElementById("t-"+st.dataset.id); if(el && S.sel) el.scrollIntoView({block:"center", behavior: reduced() ? "auto" : "smooth"}); return; }
+  const b = ev.target.closest && ev.target.closest("[data-act]"); if(!b) { if(ev.target.id === "panel") closePanel(); return; }
+  const act = b.dataset.act, id = b.dataset.id, val = b.dataset.val;
+  if(b.tagName === "SELECT" || b.tagName === "INPUT") return;
+  switch(act){
+    case "order": S.order = val; renderAll(); break;
+    case "uni": S.uni = val; renderAll(); break;
+    case "fr": S.fr = val; renderAll(); break;
+    case "cfr": S.cfr = val; renderCChips(); renderChars(); break;
+    case "toggle": S.sel = S.sel === id ? "" : id; S.pend = ""; renderAll(); break;
+    case "clear": S.sel = ""; S.pend = ""; renderAll(); break;
+    case "goto": gotoTitle(id); break;
+    case "gotoclose": closePanel(); gotoTitle(id); break;
+    case "mark": seen.add(id); changed(); break;
+    case "char": openChar(id); break;
+    case "close": closePanel(); break;
+    case "until": S.pend = id; renderAll(); break;
+    case "until-no": S.pend = ""; renderAll(); break;
+    case "until-yes": { const lst = visibleList(false); const i = lst.findIndex(x => x.id===id); lst.slice(0,i+1).forEach(x => { if(!x.ann) seen.add(x.id); }); S.pend = ""; changed(); break; }
+    case "reset": S.pend = "reset"; renderReset(); break;
+    case "reset-no": S.pend = ""; renderReset(); break;
+    case "reset-yes": seen = new Set(); S.pend = ""; renderReset(); changed(); break;
+  }
+});
+document.addEventListener("change", ev => {
+  const t = ev.target;
+  if(t.dataset && t.dataset.seen){ toggleSeen(t.dataset.seen); return; }
+  const act = t.dataset && t.dataset.act;
+  if(act === "type"){ S.type = t.value; renderAll(); }
+  else if(act === "imp"){ S.imp = t.value; renderAll(); }
+  else if(act === "only"){ S.only = t.checked; renderAll(); }
+});
+function renderReset(){
+  const box = $("#resetBox");
+  box.innerHTML = S.pend === "reset"
+    ? '<div class="conf" role="group" aria-label="Bestätigung"><span>Wirklich alle Häkchen entfernen? Das lässt sich nicht rückgängig machen.</span><button class="btn small solid" type="button" data-act="reset-yes" data-fid="ry">Ja, zurücksetzen</button><button class="btn small" type="button" data-act="reset-no" data-fid="rn">Abbrechen</button></div>'
+    : '<button class="btn small ghost" type="button" data-act="reset" data-fid="rs">Fortschritt zurücksetzen</button>';
+}
+/* Theme */
+const THEMES = ["auto","light","dark"], THEME_N = {auto:"Auto",light:"Hell",dark:"Dunkel"};
+let theme = "auto";
+try{ const v = localStorage.getItem("marvel-theme"); if(THEMES.includes(v)) theme = v; }catch(e){}
+function applyTheme(){ if(theme === "auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", theme); $("#themeBtn").textContent = "Darstellung: " + THEME_N[theme]; }
+$("#themeBtn").addEventListener("click", () => { theme = THEMES[(THEMES.indexOf(theme)+1) % 3]; try{ localStorage.setItem("marvel-theme", theme); }catch(e){} applyTheme(); });
+/* Figuren-Suche */
+(function(){
+  $("#cctl").innerHTML = '<div class="r"><span class="lbl">Suche</span><input class="srch" id="cq" type="search" placeholder="Name, Alias oder Darsteller" aria-label="Figuren durchsuchen"></div><div class="r"><span class="lbl">Franchise</span><div class="chips" id="cchips"></div></div>';
+  $("#cq").addEventListener("input", e => { S.cq = e.target.value; renderChars(); });
+})();
+/* Neuzeichnen bei Größenänderung */
+let rz = null;
+function relayout(){ clearTimeout(rz); rz = setTimeout(() => { if(!$("#tl")) return; renderList(); }, 120); }
+window.addEventListener("resize", relayout);
+if(window.ResizeObserver){ let lastH = 0; new ResizeObserver(() => { const tl = $("#tl"); if(tl && Math.abs(tl.scrollHeight - lastH) > 2){ lastH = tl.scrollHeight; layoutGraph(); } }).observe($("#list")); }
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => layoutGraph());
+loadLocal(); applyTheme(); renderReset(); renderAll();
+</script>
+</body>
+</html>
